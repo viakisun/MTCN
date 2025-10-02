@@ -18,4 +18,5 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: true,
   },
+  base: '/MTCN/', // GitHub Pages용 base path 설정
 })
