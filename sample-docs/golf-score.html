@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>스코어 기록 - 골프 플랫폼</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+            background: #F5F7FA;
+            color: #1a1a1a;
+            min-height: 100vh;
+            line-height: 1.6;
+            font-weight: 500;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .phone-mockup {
+            width: 375px;
+            height: 812px;
+            background: #000;
+            border-radius: 38px;
+            box-shadow: 0 8px 80px rgba(0,0,0,0.25);
+            margin: 0 auto;
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .phone-mockup::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            z-index: 10;
+        }
+        
+        .screen {
+            height: 100%;
+            overflow: hidden;
+            background: #fff;
+            border-radius: 38px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        .page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1;
+        }
+        
+        .page.hidden {
+            transform: translateX(-100%);
+        }
+        
+        .page.show {
+            transform: translateX(0);
+            z-index: 2;
+        }
+        
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px 8px;
+            font-size: 15px;
+            color: #1a1a1a;
+            font-weight: 600;
+            background: transparent;
+            letter-spacing: -0.2px;
+        }
+        
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px 20px;
+            background: transparent;
+        }
+        
+        .menu-btn, .back-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #f8f8f8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #1a1a1a;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            flex-shrink: 0;
+        }
+        
+        .back-btn {
+            font-size: 20px;
+        }
+        
+        .menu-btn:hover, .back-btn:hover {
+            background: #efefef;
+            transform: scale(1.05);
+        }
+        
+        .page-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a1a;
+            letter-spacing: -0.4px;
+            flex: 1;
+            text-align: center;
+            margin: 0 16px;
+        }
+        
+        .header-spacer {
+            width: 44px;
+        }
+        
+        .content-area {
+            padding: 0 24px 120px;
+            background: #fff;
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(0,0,0,0.08);
+            display: flex;
+            padding: 16px 0 28px;
+            border-radius: 0 0 38px 38px;
+            z-index: 10;
+        }
+        
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            color: #999;
+            font-size: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            padding: 8px 4px;
+            letter-spacing: -0.1px;
+            line-height: 1.2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .nav-item.active {
+            color: #2E5A87;
+        }
+        
+        .nav-icon {
+            font-size: 22px;
+            margin-bottom: 4px;
+        }
+
+        .filter-chip {
+            padding: 8px 16px;
+            border: 1px solid #E6E8EC;
+            border-radius: 20px;
+            background: white;
+            font-size: 13px;
+            font-weight: 600;
+            color: #6B7280;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            font-family: inherit;
+        }
+        
+        .filter-chip.active {
+            background: #2563EB;
+            color: white;
+            border-color: #2563EB;
+        }
+        
+        .score-summary-card {
+            background: linear-gradient(135deg, #EFF6FF, #DBEAFE);
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            border: 1px solid #BFDBFE;
+        }
+        
+        .trend-chart {
+            background: white;
+            border: 1px solid #E6E8EC;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .score-card {
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+            background: white;
+            border: 1px solid #E6E8EC;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+        }
+        
+        .score-card:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .score-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #F3F4F6;
+        }
+        
+        .score-card-course {
+            font-size: 15px;
+            font-weight: 700;
+            color: #111;
+            margin-bottom: 4px;
+        }
+        
+        .score-card-date {
+            font-size: 12px;
+            color: #6B7280;
+        }
+        
+        .score-badge {
+            font-size: 20px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 8px;
+        }
+        
+        .score-badge-par {
+            background: #DBEAFE;
+            color: #2563EB;
+        }
+        
+        .score-badge-under {
+            background: #DCFCE7;
+            color: #16A34A;
+        }
+        
+        .score-badge-over {
+            background: #FEF3C7;
+            color: #F59E0B;
+        }
+        
+        .score-card-details {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+        
+        .score-detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 12px;
+            color: #6B7280;
+        }
+        
+        .sort-select {
+            padding: 6px 12px;
+            border: 1px solid #E6E8EC;
+            border-radius: 8px;
+            background: white;
+            font-size: 12px;
+            font-weight: 600;
+            color: #111;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        
+        .sort-select:focus {
+            outline: none;
+            border-color: #2563EB;
+        }
+        
+        .ai-insight-card-compact {
+            background: white;
+            border: 1px solid #E6E8EC;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 16px;
+        }
+        
+        .detail-analysis-btn {
+            width: 100%;
+            padding: 10px;
+            background: white;
+            border: 1px solid #E6E8EC;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6B7280;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        
+        .detail-analysis-btn:hover {
+            background: #F9FAFB;
+            border-color: #2563EB;
+            color: #2563EB;
+        }
+
+        .icon-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            cursor: pointer;
+            color: #111;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .icon-btn:hover {
+            background: #F3F4F6;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-mockup">
+        <div class="screen">
+            
+            <!-- 페이지: 스코어 기록 -->
+            <div class="page" id="scorePage">
+                <div class="status-bar">
+                    <span>6:10</span>
+                    <span>📶 🔋</span>
+                </div>
+                
+                <div class="header-bar">
+                    <div style="width: 44px;"></div>
+                    <div class="page-title">스코어 기록</div>
+                    <button class="menu-btn" onclick="showScoreFilter()">🔍</button>
+                </div>
+                
+                <div class="content-area" style="padding-bottom: 100px;">
+                    <!-- 기간 필터 -->
+                    <div style="display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto;">
+                        <button class="filter-chip active" onclick="filterScore('all')">전체</button>
+                        <button class="filter-chip" onclick="filterScore('month')">이번 달</button>
+                        <button class="filter-chip" onclick="filterScore('quarter')">최근 3개월</button>
+                        <button class="filter-chip" onclick="filterScore('year')">올해</button>
+                    </div>
+                    
+                    <!-- 스코어 통계 요약 -->
+                    <div class="score-summary-card">
+                        <div style="font-size: 14px; font-weight: 600; color: #6B7280; margin-bottom: 16px;">
+                            📈 나의 스코어 통계
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 11px; color: #6B7280; margin-bottom: 4px;">평균 스코어</div>
+                                <div style="font-size: 20px; font-weight: 700; color: #2563EB;">92</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 11px; color: #6B7280; margin-bottom: 4px;">베스트 스코어</div>
+                                <div style="font-size: 20px; font-weight: 700; color: #16A34A;">85</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 11px; color: #6B7280; margin-bottom: 4px;">라운딩 횟수</div>
+                                <div style="font-size: 20px; font-weight: 700; color: #111;">24</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- AI 맞춤 분석 -->
+                    <div style="margin-bottom: 24px;">
+                        <div style="font-size: 14px; font-weight: 600; color: #111; margin-bottom: 12px;">
+                            🤖 AI 맞춤 분석
+                        </div>
+                        
+                        <!-- AI 인사이트 카드 (컴팩트) -->
+                        <div class="ai-insight-card-compact">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                                <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #2563EB, #1E40AF); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">
+                                    🎯
+                                </div>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 13px; font-weight: 700; color: #111; margin-bottom: 2px;">
+                                        이번 달 개선 현황
+                                    </div>
+                                    <div style="font-size: 11px; color: #6B7280;">
+                                        드라이버 정확도 · 퍼팅 · 아이언 적중률 개선 필요
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 간단한 지표 -->
+                            <div style="background: #F9FAFB; padding: 10px 12px; border-radius: 8px; margin-bottom: 10px;">
+                                <div style="font-size: 11px; font-weight: 600; color: #6B7280; margin-bottom: 6px;">
+                                    📊 이번 달 개선 현황
+                                </div>
+                                <div style="font-size: 11px; color: #111; line-height: 1.6;">
+                                    • 평균 스코어: <strong style="color: #16A34A;">89타</strong> (전월 대비 -2타 향상)<br>
+                                    • 다음 목표: <strong style="color: #2563EB;">85타</strong> 달성 (4타 단축)<br>
+                                    • 집중 개선: 드라이버 정확도, 퍼팅, 웨지샷
+                                </div>
+                            </div>
+                            
+                            <!-- 상세 분석 보기 버튼 -->
+                            <button class="detail-analysis-btn" onclick="showDetailAnalysis()">
+                                <span>상세 분석 보기</span>
+                                <span>▼</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 스코어 트렌드 -->
+                    <div style="margin-bottom: 20px;">
+                        <div style="font-size: 14px; font-weight: 600; color: #111; margin-bottom: 12px;">
+                            📉 스코어 트렌드
+                        </div>
+                        <div class="trend-chart">
+                            <div style="padding: 20px;">
+                                <!-- 차트 헤더 -->
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                                    <div style="font-size: 12px; color: #6B7280;">최근 10게임</div>
+                                    <div style="display: flex; gap: 12px; font-size: 11px;">
+                                        <div style="display: flex; align-items: center; gap: 4px;">
+                                            <div style="width: 8px; height: 8px; background: #2563EB; border-radius: 50%;"></div>
+                                            <span style="color: #6B7280;">타수</span>
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: 4px;">
+                                            <div style="width: 8px; height: 2px; background: #DC2626; opacity: 0.3;"></div>
+                                            <span style="color: #6B7280;">평균</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 차트 영역 -->
+                                <div style="position: relative; height: 180px;">
+                                    <!-- Y축 레이블 -->
+                                    <div style="position: absolute; left: 0; top: 0; bottom: 0; width: 30px; display: flex; flex-direction: column; justify-content: space-between; font-size: 10px; color: #9CA3AF;">
+                                        <div>100</div>
+                                        <div>90</div>
+                                        <div>80</div>
+                                        <div>70</div>
+                                        <div>60</div>
+                                    </div>
+                                    
+                                    <!-- 그리드 라인 -->
+                                    <div style="position: absolute; left: 35px; right: 0; top: 0; bottom: 0;">
+                                        <div style="position: absolute; width: 100%; height: 1px; background: #F3F4F6; top: 0%;"></div>
+                                        <div style="position: absolute; width: 100%; height: 1px; background: #F3F4F6; top: 25%;"></div>
+                                        <div style="position: absolute; width: 100%; height: 1px; background: #F3F4F6; top: 50%;"></div>
+                                        <div style="position: absolute; width: 100%; height: 1px; background: #F3F4F6; top: 75%;"></div>
+                                        <div style="position: absolute; width: 100%; height: 1px; background: #F3F4F6; top: 100%;"></div>
+                                    </div>
+                                    
+                                    <!-- 평균선 (92) -->
+                                    <div style="position: absolute; left: 35px; right: 0; top: 28%; height: 2px; background: #DC2626; opacity: 0.3; border-radius: 1px;"></div>
+                                    
+                                    <!-- 데이터 포인트 및 선 -->
+                                    <svg style="position: absolute; left: 35px; right: 0; top: 0; bottom: 0; width: calc(100% - 35px); height: 100%;">
+                                        <!-- 선 그래프 -->
+                                        <polyline
+                                            points="5,50 45,70 85,40 125,55 165,45 205,60 245,35 285,50 325,30 365,38"
+                                            fill="none"
+                                            stroke="#2563EB"
+                                            stroke-width="2"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                        />
+                                        
+                                        <!-- 데이터 포인트 -->
+                                        <circle cx="5" cy="50" r="4" fill="#2563EB" />
+                                        <circle cx="45" cy="70" r="4" fill="#2563EB" />
+                                        <circle cx="85" cy="40" r="4" fill="#2563EB" />
+                                        <circle cx="125" cy="55" r="4" fill="#2563EB" />
+                                        <circle cx="165" cy="45" r="4" fill="#2563EB" />
+                                        <circle cx="205" cy="60" r="4" fill="#2563EB" />
+                                        <circle cx="245" cy="35" r="4" fill="#2563EB" />
+                                        <circle cx="285" cy="50" r="4" fill="#2563EB" />
+                                        <circle cx="325" cy="30" r="4" fill="#2563EB" />
+                                        <circle cx="365" cy="38" r="4" fill="#2563EB" />
+                                        
+                                        <!-- 포인트 위 숫자 -->
+                                        <text x="5" y="45" text-anchor="middle" font-size="10" fill="#2563EB" font-weight="600">88</text>
+                                        <text x="45" y="65" text-anchor="middle" font-size="10" fill="#2563EB" font-weight="600">95</text>
+                                        <text x="85" y="35" text-anchor="middle" font-size="10" fill="#2563EB" font-weight="600">85</text>
+                                        <text x="125" y="50" text-anchor="middle" font-size="10" fill="#2563EB" font-weight="600">90</text>
+                                        <text x="165" y="40" text-anchor="middle" font-size="10" fill="#2563EB" font-weight="600">87</text>
+                                        <text x="205" y="55" text-anchor="middle" font-size="10" fill="#2563EB" font-weight="600">93</text>
+                                        <text x="245" y="30" text-anchor="middle" font-size="10" fill="#2563EB" font-weight="600">82</text>
+                                        <text x="285" y="45" text-anchor="middle" font-size="10" fill="#2563EB" font-weight="600">88</text>
+                                        <text x="325" y="25" text-anchor="middle" font-size="10" fill="#2563EB" font-weight="600">78</text>
+                                        <text x="365" y="33" text-anchor="middle" font-size="10" fill="#2563EB" font-weight="600">84</text>
+                                    </svg>
+                                </div>
+                                
+                                <!-- X축 날짜 -->
+                                <div style="display: flex; justify-content: space-between; margin-top: 12px; margin-left: 35px; font-size: 10px; color: #9CA3AF;">
+                                    <span>11/25</span>
+                                    <span>12/02</span>
+                                    <span>12/09</span>
+                                    <span>12/16</span>
+                                    <span>12/23</span>
+                                    <span>12/30</span>
+                                    <span>01/06</span>
+                                    <span>01/13</span>
+                                    <span>01/20</span>
+                                    <span>01/27</span>
+                                </div>
+                                
+                                <!-- 개선 인사이트 -->
+                                <div style="margin-top: 16px; padding: 12px; background: #DCFCE7; border-radius: 8px; border: 1px solid #BBF7D0;">
+                                    <div style="font-size: 12px; font-weight: 600; color: #16A34A; margin-bottom: 4px;">📈 개선 중!</div>
+                                    <div style="font-size: 11px; color: #15803D;">
+                                        최근 3게임 평균 80타로 전체 평균 대비 12타 개선되었습니다
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 최근 라운딩 기록 -->
+                    <div style="margin-bottom: 32px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                            <h2 style="font-size: 18px; font-weight: 700; color: #1a1a1a;">🌏 최근 라운딩</h2>
+                            <button onclick="showAllScores()" style="font-size: 13px; color: #2563EB; background: none; border: none; cursor: pointer; font-weight: 600; font-family: inherit;">전체보기 →</button>
+                        </div>
+                        
+                        <!-- 스코어 카드 1 -->
+                        <div class="score-card">
+                            <div class="score-card-header">
+                                <div>
+                                    <div class="score-card-course">레이크사이드 골프클럽</div>
+                                    <div class="score-card-date">2025년 1월 25일 (토)</div>
+                                </div>
+                                <div class="score-badge score-badge-par">E</div>
+                            </div>
+                            <div class="score-card-details">
+                                <div class="score-detail-item">
+                                    <span>총 타수</span>
+                                    <span style="font-weight: 700;">72</span>
+                                </div>
+                                <div class="score-detail-item">
+                                    <span>파</span>
+                                    <span style="font-weight: 700; color: #2563EB;">14</span>
+                                </div>
+                                <div class="score-detail-item">
+                                    <span>버디</span>
+                                    <span style="font-weight: 700; color: #16A34A;">3</span>
+                                </div>
+                                <div class="score-detail-item">
+                                    <span>보기</span>
+                                    <span style="font-weight: 700; color: #F59E0B;">1</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 스코어 카드 2 -->
+                        <div class="score-card">
+                            <div class="score-card-header">
+                                <div>
+                                    <div class="score-card-course">스카이힐 컨트리클럽</div>
+                                    <div class="score-card-date">2025년 1월 18일 (토)</div>
+                                </div>
+                                <div class="score-badge score-badge-over">+3</div>
+                            </div>
+                            <div class="score-card-details">
+                                <div class="score-detail-item">
+                                    <span>총 타수</span>
+                                    <span style="font-weight: 700;">75</span>
+                                </div>
+                                <div class="score-detail-item">
+                                    <span>파</span>
+                                    <span style="font-weight: 700; color: #2563EB;">12</span>
+                                </div>
+                                <div class="score-detail-item">
+                                    <span>버디</span>
+                                    <span style="font-weight: 700; color: #16A34A;">2</span>
+                                </div>
+                                <div class="score-detail-item">
+                                    <span>보기</span>
+                                    <span style="font-weight: 700; color: #F59E0B;">4</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 스코어 카드 3 -->
+                        <div class="score-card">
+                            <div class="score-card-header">
+                                <div>
+                                    <div class="score-card-course">그린밸리 골프클럽</div>
+                                    <div class="score-card-date">2025년 1월 11일 (토)</div>
+                                </div>
+                                <div class="score-badge score-badge-under">-2</div>
+                            </div>
+                            <div class="score-card-details">
+                                <div class="score-detail-item">
+                                    <span>총 타수</span>
+                                    <span style="font-weight: 700;">70</span>
+                                </div>
+                                <div class="score-detail-item">
+                                    <span>파</span>
+                                    <span style="font-weight: 700; color: #2563EB;">13</span>
+                                </div>
+                                <div class="score-detail-item">
+                                    <span>버디</span>
+                                    <span style="font-weight: 700; color: #16A34A;">5</span>
+                                </div>
+                                <div class="score-detail-item">
+                                    <span>보기</span>
+                                    <span style="font-weight: 700; color: #F59E0B;">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 하단 네비게이션 -->
+                <div class="bottom-nav">
+                    <div class="nav-item">
+                        <div class="nav-icon">🏠</div>
+                        <div>홈</div>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-icon">🌏</div>
+                        <div>라운딩</div>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-icon">👥</div>
+                        <div>동문회</div>
+                    </div>
+                    <div class="nav-item active">
+                        <div class="nav-icon">📊</div>
+                        <div>스코어</div>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-icon">👤</div>
+                        <div>프로필</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 페이지: 전체 스코어 기록 -->
+            <div class="page" id="allScoresPage" style="transform: translateX(100%);">
+                <div class="status-bar">
+                    <span>6:10</span>
+                    <span>📶 🔋</span>
+                </div>
+                
+                <div class="header-bar" style="padding: 12px 16px;">
+                    <button class="back-btn" onclick="backToScorePage()">←</button>
+                    <div style="flex: 1; text-align: center;">
+                        <div style="font-size: 13px; font-weight: 600; color: #111;">
+                            전체 라운딩 기록
+                        </div>
+                    </div>
+                    <button class="icon-btn" onclick="showScoreFilter()">🔍</button>
+                </div>
+                
+                <div class="content-area" style="padding-bottom: 100px;">
+                    <!-- 필터 및 정렬 -->
+                    <div style="display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto;">
+                        <button class="filter-chip active" onclick="filterAllScores('all')">전체 (24)</button>
+                        <button class="filter-chip" onclick="filterAllScores('2025')">2025년 (8)</button>
+                        <button class="filter-chip" onclick="filterAllScores('2024')">2024년 (16)</button>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <div style="font-size: 13px; color: #6B7280;">총 24개의 라운딩</div>
+                        <select class="sort-select" onchange="sortScores(this.value)">
+                            <option value="date-desc">최신순</option>
+                            <option value="date-asc">오래된순</option>
+                            <option value="score-asc">스코어 낮은순</option>
+                            <option value="score-desc">스코어 높은순</option>
+                        </select>
+                    </div>
+                    
+                    <!-- 2025년 -->
+                    <div style="margin-bottom: 24px;">
+                        <div style="font-size: 14px; font-weight: 700; color: #111; margin-bottom: 12px; padding: 8px 0; border-bottom: 2px solid #E6E8EC;">
+                            2025년
+                        </div>
+                        
+                        <div class="score-card">
+                            <div class="score-card-header">
+                                <div>
+                                    <div class="score-card-course">레이크사이드 골프클럽</div>
+                                    <div class="score-card-date">2025년 1월 25일 (토)</div>
+                                </div>
+                                <div class="score-badge score-badge-par">E</div>
+                            </div>
+                            <div class="score-card-details">
+                                <div class="score-detail-item">
+                                    <span>총 타수</span>
+                                    <span style="font-weight: 700;">72</span>
+                                </div>
+                                <div class="score-detail-item">
+                                    <span>파</span>
+                                    <span style="font-weight: 700; color: #2563EB;">14</span>
+                                </div>
+                                <div class="score-detail-item">
+                                    <span>버디</span>
+                                    <span style="font-weight: 700; color: #16A34A;">3</span>
+                                </div>
+                                <div class="score-detail-item">
+                                    <span>보기</span>
+                                    <span style="font-weight: 700; color: #F59E0B;">1</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="score-card">
+                            <div class="score-card-header">
+                                <div>
+                                    <div class="score-card-course">스카이힐 컨트리클럽</div>
+                                    <div class="score-card-date">2025년 1월 18일 (토)</div>
+                                </div>
+                                <div class="score-badge score-badge-over">+3</div>
+                            </div>
+                            <div class="score-card-details">
+                                <div class="score-detail-item">
+                                    <span>총 타수</span>
+                                    <span style="font-weight: 700;">75</span>
+                                </div>
+                                <div class="score-detail-item">
+                                    <span>파</span>
+                                    <span style="font-weight: 700; color: #2563EB;">12</span>
+                                </div>
+                                <div class="score-detail-item">
+                                    <span>버디</span>
+                                    <span style="font-weight: 700; color: #16A34A;">2</span>
+                                </div>
+                                <div class="score-detail-item">
+                                    <span>보기</span>
+                                    <span style="font-weight: 700; color: #F59E0B;">4</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="score-card">
+                            <div class="score-card-header">
+                                <div>
+                                    <div class="score-card-course">그린밸리 골프클럽</div>
+                                    <div class="score-card-date">2025년 1월 11일 (토)</div>
+                                </div>
+                                <div class="score-badge score-badge-under">-2</div>
+                            </div>
+                            <div class="score-card-details">
+                                <div class="score-detail-item">
+                                    <span>총 타수</span>
+                                    <span style="font-weight: 700;">70</span>
+                                </div>
+                                <div class="score-detail-item">
+                                    <span>파</span>
+                                    <span style="font-weight: 700; color: #2563EB;">13</span>
+                                </div>
+                                <div class="score-detail-item">
+                                    <span>버디</span>
+                                    <span style="font-weight: 700; color: #16A34A;">5</span>
+                                </div>
+                                <div class="score-detail-item">
+                                    <span>보기</span>
+                                    <span style="font-weight: 700; color: #F59E0B;">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 2024년 -->
+                    <div style="margin-bottom: 24px;">
+                        <div style="font-size: 14px; font-weight: 700; color: #111; margin-bottom: 12px; padding: 8px 0; border-bottom: 2px solid #E6E8EC;">
+                            2024년
+                        </div>
+                        
+                        <div class="score-card">
+                            <div class="score-card-header">
+                                <div>
+                                    <div class="score-card-course">파인힐 컨트리클럽</div>
+                                    <div class="score-card-date">2024년 12월 28일 (토)</div>
+                                </div>
+                                <div class="score-badge score-badge-over">+5</div>
+                            </div>
+                            <div class="score-card-details">
+                                <div class="score-detail-item">
+                                    <span>총 타수</span>
+                                    <span style="font-weight: 700;">77</span>
+                                </div>
+                                <div class="score-detail-item">
+                                    <span>파</span>
+                                    <span style="font-weight: 700; color: #2563EB;">10</span>
+                                </div>
+                                <div class="score-detail-item">
+                                    <span>버디</span>
+                                    <span style="font-weight: 700; color: #16A34A;">1</span>
+                                </div>
+                                <div class="score-detail-item">
+                                    <span>보기</span>
+                                    <span style="font-weight: 700; color: #F59E0B;">6</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="score-card">
+                            <div class="score-card-header">
+                                <div>
+                                    <div class="score-card-course">오션뷰 골프클럽</div>
+                                    <div class="score-card-date">2024년 12월 21일 (토)</div>
+                                </div>
+                                <div class="score-badge score-badge-par">E</div>
+                            </div>
+                            <div class="score-card-details">
+                                <div class="score-detail-item">
+                                    <span>총 타수</span>
+                                    <span style="font-weight: 700;">72</span>
+                                </div>
+                                <div class="score-detail-item">
+                                    <span>파</span>
+                                    <span style="font-weight: 700; color: #2563EB;">13</span>
+                                </div>
+                                <div class="score-detail-item">
+                                    <span>버디</span>
+                                    <span style="font-weight: 700; color: #16A34A;">4</span>
+                                </div>
+                                <div class="score-detail-item">
+                                    <span>보기</span>
+                                    <span style="font-weight: 700; color: #F59E0B;">1</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="score-card">
+                            <div class="score-card-header">
+                                <div>
+                                    <div class="score-card-course">마운틴뷰 골프클럽</div>
+                                    <div class="score-card-date">2024년 12월 14일 (토)</div>
+                                </div>
+                                <div class="score-badge score-badge-under">-1</div>
+                            </div>
+                            <div class="score-card-details">
+                                <div class="score-detail-item">
+                                    <span>총 타수</span>
+                                    <span style="font-weight: 700;">71</span>
+                                </div>
+                                <div class="score-detail-item">
+                                    <span>파</span>
+                                    <span style="font-weight: 700; color: #2563EB;">14</span>
+                                </div>
+                                <div class="score-detail-item">
+                                    <span>버디</span>
+                                    <span style="font-weight: 700; color: #16A34A;">4</span>
+                                </div>
+                                <div class="score-detail-item">
+                                    <span>보기</span>
+                                    <span style="font-weight: 700; color: #F59E0B;">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="text-align: center; padding: 20px; color: #9CA3AF;">
+                            <div style="font-size: 14px; margin-bottom: 8px;">📋</div>
+                            <div style="font-size: 13px;">더 많은 기록이 있습니다</div>
+                            <button onclick="loadMoreScores()" style="margin-top: 12px; padding: 8px 16px; background: white; border: 1px solid #E6E8EC; border-radius: 8px; font-size: 13px; font-weight: 600; color: #2563EB; cursor: pointer; font-family: inherit;">
+                                더 보기 (10개 더)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 스코어 페이지 함수들
+        function filterScore(period) {
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            console.log('Filter by:', period);
+        }
+        
+        function showScoreFilter() {
+            alert('필터 옵션\n\n• 날짜 범위 선택\n• 골프장별 보기\n• 스코어별 정렬');
+        }
+        
+        function showAllScores() {
+            document.getElementById('scorePage').classList.add('hidden');
+            document.getElementById('allScoresPage').style.transform = 'translateX(0)';
+        }
+        
+        function backToScorePage() {
+            document.getElementById('scorePage').classList.remove('hidden');
+            document.getElementById('allScoresPage').style.transform = 'translateX(100%)';
+        }
+        
+        function filterAllScores(period) {
+            document.querySelectorAll('#allScoresPage .filter-chip').forEach(chip => {
+                chip.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            console.log('Filter all scores by:', period);
+        }
+        
+        function sortScores(sortType) {
+            console.log('Sort by:', sortType);
+        }
+        
+        function loadMoreScores() {
+            alert('10개의 기록을 더 불러옵니다...');
+        }
+        
+        function showDetailAnalysis() {
+            alert('📊 상세 AI 분석\n\n' +
+                  '💪 강점:\n' +
+                  '• 드라이버 샷: 92% (상위 15%)\n' +
+                  '• 그린 적중률: 78%\n' +
+                  '• 파 세이브: 85%\n\n' +
+                  '📈 개선 필요:\n' +
+                  '• 퍼팅: 평균 2.1타 (목표 1.8)\n' +
+                  '• 벙커 탈출: 62%\n\n' +
+                  '💡 추천 훈련:\n' +
+                  '퍼팅 연습 집중 시 5타 단축 가능');
+        }
+    </script>
+</body>
+</html>

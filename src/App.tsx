@@ -1,0 +1,60 @@
+import { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { PhoneFrame } from '@/components/layout/PhoneFrame';
+import { useAppStore } from '@/lib/store';
+import HomePage from '@/components/pages/HomePage';
+import RoundingPage from '@/components/pages/RoundingPage';
+import GroupsPage from '@/components/pages/GroupsPage';
+import ScorePage from '@/components/pages/ScorePage';
+import ProfilePage from '@/components/pages/ProfilePage';
+
+export default function App() {
+  const { 
+    activeTab, 
+    setActiveTab,
+    isDemoMode,
+    setDemoStep
+  } = useAppStore();
+  
+  const [currentPage, setCurrentPage] = useState<'rounding' | 'detail' | 'live' | 'score'>('rounding');
+
+  // 데모 자동 진행
+  useEffect(() => {
+    if (!isDemoMode) return;
+
+    const demoSequence = [
+      { delay: 2000, action: () => setDemoStep(1) },
+      { delay: 5000, action: () => setActiveTab('groups') },
+      { delay: 8000, action: () => setDemoStep(2) },
+      { delay: 12000, action: () => setActiveTab('rounding') },
+      { delay: 15000, action: () => setDemoStep(3) },
+    ];
+
+    demoSequence.forEach(({ delay, action }) => {
+      setTimeout(action, delay);
+    });
+  }, [isDemoMode, setActiveTab, setDemoStep]);
+
+  return (
+    <PhoneFrame activeTab={activeTab} onTabChange={setActiveTab}>
+      <div className="flex flex-col h-full relative">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, x: 300 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -300 }}
+            transition={{ duration: 0.3 }}
+            className="flex-1 flex flex-col"
+          >
+            {activeTab === 'home' && <HomePage />}
+            {activeTab === 'rounding' && <RoundingPage />}
+            {activeTab === 'groups' && <GroupsPage />}
+            {activeTab === 'score' && <ScorePage />}
+            {activeTab === 'profile' && <ProfilePage />}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </PhoneFrame>
+  );
+}

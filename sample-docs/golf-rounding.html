@@ -1,0 +1,3209 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>라운딩 - 골프 플랫폼</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+            background: #F5F7FA;
+            color: #1a1a1a;
+            min-height: 100vh;
+            line-height: 1.6;
+            font-weight: 500;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .phone-mockup {
+            width: 375px;
+            height: 812px;
+            background: #000;
+            border-radius: 38px;
+            box-shadow: 0 8px 80px rgba(0,0,0,0.25);
+            margin: 0 auto;
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .phone-mockup::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            z-index: 10;
+        }
+        
+        .screen {
+            height: 100%;
+            overflow: hidden;
+            background: #fff;
+            border-radius: 38px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        /* 페이지 전환 */
+        .page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1;
+        }
+        
+        .page.hidden {
+            transform: translateX(-100%);
+        }
+        
+        .page.show {
+            transform: translateX(0);
+            z-index: 2;
+        }
+        
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px 8px;
+            font-size: 15px;
+            color: #1a1a1a;
+            font-weight: 600;
+            background: transparent;
+            letter-spacing: -0.2px;
+        }
+        
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px 20px;
+            background: transparent;
+        }
+        
+        .menu-btn, .back-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #f8f8f8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #1a1a1a;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            flex-shrink: 0;
+        }
+        
+        .back-btn {
+            font-size: 20px;
+        }
+        
+        .menu-btn:hover, .back-btn:hover {
+            background: #efefef;
+            transform: scale(1.05);
+        }
+        
+        .page-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a1a;
+            letter-spacing: -0.4px;
+            flex: 1;
+            text-align: center;
+            margin: 0 16px;
+        }
+        
+        .header-spacer {
+            width: 44px;
+        }
+        
+        .content-area {
+            padding: 0 24px 120px;
+            background: #fff;
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 6px;
+            box-shadow: 0 1px 12px rgba(0,0,0,0.04);
+            border: 1px solid rgba(0,0,0,0.06);
+            border-bottom: 1px solid #F3F4F6;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+        
+        .card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 24px rgba(0,0,0,0.08);
+        }
+        
+        .round-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        
+        .round-course {
+            flex: 1;
+        }
+        
+        .course-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+        
+        .round-date {
+            font-size: 12px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        
+        .status-upcoming {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .status-completed {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .round-info {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .info-chip {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .participants {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-top: 10px;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .avatar-group {
+            display: flex;
+            margin-left: -8px;
+        }
+        
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 12px;
+            border: 2px solid white;
+            margin-left: -8px;
+        }
+        
+        .participant-count {
+            font-size: 13px;
+            color: #666;
+            margin-left: 8px;
+        }
+        
+        .btn {
+            background: #2E5A87;
+            color: white;
+            border: none;
+            padding: 16px 24px;
+            border-radius: 16px;
+            cursor: pointer;
+            font-size: 15px;
+            width: 100%;
+            margin-top: 12px;
+            transition: all 0.2s;
+            font-weight: 600;
+            font-family: inherit;
+        }
+        
+        .btn:hover:not(:disabled) {
+            background: #1E3A52;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px rgba(46, 90, 135, 0.3);
+        }
+        
+        .btn:disabled {
+            background: #ddd;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-outline {
+            background: white;
+            color: #2E5A87;
+            border: 2px solid #2E5A87;
+        }
+        
+        .btn-outline:hover {
+            background: #2E5A87;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #2E5A87;
+            border: 2px solid #2E5A87;
+            margin-bottom: 8px;
+        }
+        
+        .btn-secondary:hover {
+            background: #f8f9fa;
+        }
+        
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(0,0,0,0.08);
+            display: flex;
+            padding: 16px 0 28px;
+            border-radius: 0 0 38px 38px;
+            z-index: 10;
+        }
+        
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            color: #999;
+            font-size: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            padding: 8px 4px;
+            letter-spacing: -0.1px;
+            line-height: 1.2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .nav-item.active {
+            color: #2E5A87;
+        }
+        
+        .nav-icon {
+            font-size: 22px;
+            margin-bottom: 4px;
+        }
+
+        /* 모달 스타일 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal {
+            background: white;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 340px;
+            max-height: 80vh;
+            overflow: hidden;
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        .modal-header {
+            padding: 24px 24px 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+        
+        .modal-subtitle {
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .modal-content {
+            padding: 16px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .club-option {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            border-radius: 16px;
+            border: 2px solid #f0f0f0;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+        
+        .club-option:hover {
+            border-color: #2E5A87;
+            background: #f8f9fa;
+        }
+        
+        .club-option.selected {
+            border-color: #2E5A87;
+            background: #e3f2fd;
+        }
+        
+        .club-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        
+        .club-info {
+            flex: 1;
+        }
+        
+        .club-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+        
+        .club-meta {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .radio-check {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .club-option.selected .radio-check,
+        .course-card.selected .radio-check,
+        .visibility-option.selected .radio-check {
+            border-color: #2E5A87;
+            background: #2E5A87;
+        }
+        
+        .radio-check::after {
+            content: '✓';
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .club-option.selected .radio-check::after,
+        .course-card.selected .radio-check::after,
+        .visibility-option.selected .radio-check::after {
+            opacity: 1;
+        }
+        
+        .modal-footer {
+            padding: 16px 24px 24px;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .personal-option {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border: 2px dashed #ddd;
+        }
+        
+        /* 라운딩 만들기 페이지 스타일 */
+        .progress-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 32px;
+            padding: 0 4px;
+        }
+        
+        .progress-step {
+            flex: 1;
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+        
+        .progress-step.active {
+            background: #2E5A87;
+        }
+        
+        .section-header {
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .section-subtitle {
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .required-badge {
+            display: inline-block;
+            background: #dc3545;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+        }
+        
+        .form-group {
+            margin-bottom: 32px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: all 0.2s;
+            background: white;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #2E5A87;
+            background: #f8f9fa;
+        }
+        
+        .form-input::placeholder {
+            color: #999;
+        }
+        
+        .date-time-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        
+        .course-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 16px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+            margin-bottom: 12px;
+        }
+        
+        .course-card:hover {
+            border-color: #2E5A87;
+            background: #f8f9fa;
+        }
+        
+        .course-card.selected {
+            border-color: #2E5A87;
+            background: #e3f2fd;
+        }
+        
+        .course-name-text {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+        
+        .course-info {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .search-btn {
+            width: 100%;
+            padding: 16px;
+            border: 2px dashed #2E5A87;
+            border-radius: 12px;
+            background: white;
+            color: #2E5A87;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        
+        .search-btn:hover {
+            background: #e3f2fd;
+        }
+        
+        .counter-control {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: #f8f9fa;
+            padding: 12px 16px;
+            border-radius: 12px;
+        }
+        
+        .counter-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: white;
+            color: #2E5A87;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .counter-btn:hover:not(:disabled) {
+            background: #2E5A87;
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .counter-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        
+        .counter-value {
+            flex: 1;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a1a;
+            transition: all 0.2s;
+        }
+        
+        .counter-value:hover {
+            background: rgba(46, 90, 135, 0.05);
+            border-radius: 8px;
+        }
+        
+        .counter-input {
+            flex: 1;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a1a;
+            border: 2px solid #2E5A87;
+            border-radius: 8px;
+            padding: 8px;
+            background: white;
+            font-family: inherit;
+        }
+        
+        .counter-input:focus {
+            outline: none;
+            border-color: #1E3A52;
+            box-shadow: 0 0 0 3px rgba(46, 90, 135, 0.1);
+        }
+        
+        .visibility-options {
+            display: grid;
+            gap: 12px;
+        }
+        
+        .visibility-option {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+        
+        .visibility-option:hover {
+            border-color: #2E5A87;
+            background: #f8f9fa;
+        }
+        
+        .visibility-option.selected {
+            border-color: #2E5A87;
+            background: #e3f2fd;
+        }
+        
+        .visibility-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        
+        .visibility-content {
+            flex: 1;
+        }
+        
+        .visibility-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+        
+        .visibility-desc {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        .selected-club-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #2E5A87, #4A7BA7);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+        
+        .club-badge-icon {
+            font-size: 20px;
+        }
+        
+        .bottom-actions {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 16px 24px 32px;
+            border-top: 1px solid #e0e0e0;
+            border-radius: 0 0 38px 38px;
+            z-index: 5;
+        }
+        
+        .hint-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        /* 라운딩 만들기 버튼 스타일 */
+        .create-round-button {
+            width: 100%;
+            height: 40px;
+            background: white;
+            border: 1.5px solid #D1D5DB;
+            border-radius: 10px;
+            box-shadow: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 13px;
+            font-weight: 600;
+            color: #6B7280;
+            font-family: inherit;
+            margin-bottom: 16px;
+        }
+        
+        .create-round-button:hover {
+            background: #F9FAFB;
+            border-color: #2E5A87;
+            color: #2E5A87;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        
+        .create-round-button:active {
+            background: #e3f2fd;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-mockup">
+        <div class="screen">
+            <!-- 페이지 1: 라운딩 홈 -->
+            <div class="page" id="homePage">
+                <div class="status-bar">
+                    <span>6:10</span>
+                    <span>📶 🔋</span>
+                </div>
+                
+                <div class="header-bar">
+                    <div style="width: 44px;"></div>
+                    <div class="page-title">라운딩</div>
+                    <div style="width: 44px;"></div>
+                </div>
+                
+                <div class="content-area">
+                    
+                    <!-- 섹션 1: 내 일정 -->
+                    <div style="margin-bottom: 32px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                            <h2 style="font-size: 18px; font-weight: 700; color: #1a1a1a;">📅 내 일정</h2>
+                            <button style="font-size: 12px; color: #6B7280; background: none; border: none; cursor: pointer; font-weight: 600; font-family: inherit;">전체보기 →</button>
+                        </div>
+                        
+                        <!-- 참여 예정 라운딩 -->
+                        <div class="card" onclick="showRoundDetail()">
+                            <div style="display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #3B82F6, #2563EB); color: white; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; margin-bottom: 12px;">
+                                <span>🎓</span>
+                                <span>연세대 골프동문회</span>
+                            </div>
+                            <div class="round-header">
+                                <div class="round-course">
+                                    <div class="course-name">레이크사이드 골프클럽</div>
+                                    <div class="round-date">
+                                        📅 1월 25일 (토) 14:00
+                                    </div>
+                                </div>
+                                <div class="status-badge status-upcoming">오늘</div>
+                            </div>
+                            
+                            <div class="round-info">
+                                <div class="info-chip">⛳ 18홀</div>
+                                <div class="info-chip">☀️ 맑음 22°C</div>
+                                <div class="info-chip">💰 120,000원</div>
+                            </div>
+                            
+                            <div class="participants">
+                                <div class="avatar-group">
+                                    <div class="avatar" style="background: linear-gradient(135deg, #2E5A87, #4A7BA7);">김</div>
+                                    <div class="avatar" style="background: linear-gradient(135deg, #28a745, #20c997);">박</div>
+                                    <div class="avatar" style="background: linear-gradient(135deg, #fd7e14, #e85d04);">이</div>
+                                    <div class="avatar" style="background: linear-gradient(135deg, #6f42c1, #e83e8c);">최</div>
+                                </div>
+                                <span class="participant-count">4명 참가</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div style="display: inline-flex; align-items: center; gap: 6px; background: #9CA3AF; color: white; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; margin-bottom: 12px;">
+                                <span>👤</span>
+                                <span>개인 라운딩</span>
+                            </div>
+                            <div class="round-header">
+                                <div class="round-course">
+                                    <div class="course-name">스카이힐 컨트리클럽</div>
+                                    <div class="round-date">
+                                        📅 2월 3일 (일) 09:00
+                                    </div>
+                                </div>
+                                <div class="status-badge status-upcoming">D-12</div>
+                            </div>
+                            
+                            <div class="round-info">
+                                <div class="info-chip">⛳ 18홀</div>
+                                <div class="info-chip">🌤️ 구름 15°C</div>
+                                <div class="info-chip">💰 140,000원</div>
+                            </div>
+                            
+                            <div class="participants">
+                                <div class="avatar-group">
+                                    <div class="avatar" style="background: linear-gradient(135deg, #2E5A87, #4A7BA7);">김</div>
+                                    <div class="avatar" style="background: linear-gradient(135deg, #28a745, #20c997);">박</div>
+                                </div>
+                                <span class="participant-count">2명 참가 • 2명 대기</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 라운딩 만들기 버튼 -->
+                    <button class="create-round-button" onclick="openClubModal()" title="라운딩 만들기">
+                        <span style="font-size: 14px;">+</span>
+                        <span>라운딩 만들기</span>
+                    </button>
+                    
+                    <!-- 섹션 2: 참여 가능한 라운딩 -->
+                    <div style="margin-bottom: 32px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                            <h2 style="font-size: 18px; font-weight: 700; color: #1a1a1a;">🧭 참여 가능한 라운딩</h2>
+                            <button style="font-size: 12px; color: #6B7280; background: none; border: none; cursor: pointer; font-weight: 600; font-family: inherit;">더보기 →</button>
+                        </div>
+                        
+                        <!-- 초대받은 라운딩 -->
+                        <div class="card" style="border: 2px solid #2E5A87;">
+                            <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
+                                <div style="display: inline-flex; align-items: center; gap: 6px; background: #2E5A87; color: white; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700;">
+                                    <span>💌</span>
+                                    <span>초대받음</span>
+                                </div>
+                                <div style="display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #fd7e14, #e85d04); color: white; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700;">
+                                    <span>🦁</span>
+                                    <span>라이온스 골프모임</span>
+                                </div>
+                            </div>
+                            <div class="round-header">
+                                <div class="round-course">
+                                    <div class="course-name">파인밸리 골프클럽</div>
+                                    <div class="round-date">
+                                        📅 2월 8일 (토) 10:30
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="round-info">
+                                <div class="info-chip">⛳ 18홀</div>
+                                <div class="info-chip">☀️ 맑음 20°C</div>
+                                <div class="info-chip">💰 135,000원</div>
+                            </div>
+                            
+                            <div class="participants">
+                                <div style="font-size: 12px; color: #666; margin-bottom: 8px;">
+                                    <strong>박영희</strong>님이 초대했습니다
+                                </div>
+                                <div class="avatar-group">
+                                    <div class="avatar" style="background: linear-gradient(135deg, #28a745, #20c997);">박</div>
+                                    <div class="avatar" style="background: linear-gradient(135deg, #fd7e14, #e85d04);">이</div>
+                                    <div class="avatar" style="background: linear-gradient(135deg, #6f42c1, #e83e8c);">최</div>
+                                </div>
+                                <span class="participant-count">3명 확정 • 1자리 남음</span>
+                            </div>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px;">
+                                <button class="btn btn-outline" onclick="declineInvite()" style="padding: 12px;">거절</button>
+                                <button class="btn" onclick="acceptInvite()" style="padding: 12px;">참가하기</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bottom-nav">
+                    <div class="nav-item">
+                        <div class="nav-icon">🏠</div>
+                        <div>홈</div>
+                    </div>
+                    <div class="nav-item active">
+                        <div class="nav-icon">🌏️</div>
+                        <div>라운딩</div>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-icon">👥</div>
+                        <div>동문회</div>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-icon">📊</div>
+                        <div>스코어</div>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-icon">👤</div>
+                        <div>프로필</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 페이지 2: 라운딩 만들기 -->
+            <div class="page show" id="createPage" style="transform: translateX(100%);">
+                <div class="status-bar">
+                    <span>6:10</span>
+                    <span>📶 🔋</span>
+                </div>
+                
+                <div class="header-bar">
+                    <button class="back-btn" onclick="goBackToHome()">←</button>
+                    <div class="page-title">라운딩 만들기</div>
+                    <div class="header-spacer"></div>
+                </div>
+                
+                <div class="content-area">
+                    <!-- 진행 상황 표시 -->
+                    <div class="progress-bar">
+                        <div class="progress-step active"></div>
+                        <div class="progress-step active"></div>
+                        <div class="progress-step"></div>
+                    </div>
+                    
+                    <!-- 선택된 동문회 표시 -->
+                    <div class="selected-club-badge fade-in" id="selectedClubBadge">
+                        <span class="club-badge-icon" id="clubBadgeIcon">🎓</span>
+                        <span id="clubBadgeName">연세대 골프동문회</span>
+                    </div>
+                    
+                    <!-- 1. 날짜 및 시간 -->
+                    <div class="form-group fade-in" style="animation-delay: 0.1s;">
+                        <div class="section-header">
+                            <div class="section-title">
+                                📅 라운딩 날짜 및 시간
+                                <span class="required-badge">필수</span>
+                            </div>
+                            <div class="section-subtitle">언제 라운딩을 하시나요?</div>
+                        </div>
+                        
+                        <div class="date-time-grid">
+                            <div>
+                                <label class="form-label">날짜</label>
+                                <input type="date" class="form-input" id="roundDate" value="2025-02-15">
+                            </div>
+                            <div>
+                                <label class="form-label">시간</label>
+                                <input type="time" class="form-input" id="roundTime" value="10:00">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 2. 골프장 선택 -->
+                    <div class="form-group fade-in" style="animation-delay: 0.2s;">
+                        <div class="section-header">
+                            <div class="section-title">
+                                ⛳ 골프장 선택
+                                <span class="required-badge">필수</span>
+                            </div>
+                            <div class="section-subtitle">어디서 플레이하시나요?</div>
+                        </div>
+                        
+                        <div class="course-card selected" onclick="selectCourse('lakeside')">
+                            <div style="display: flex; align-items: center; justify-content: space-between;">
+                                <div style="flex: 1;">
+                                    <div class="course-name-text">레이크사이드 골프클럽</div>
+                                    <div class="course-info">📍 경기도 가평군 • 18홀 • 120,000원</div>
+                                </div>
+                                <div class="radio-check"></div>
+                            </div>
+                        </div>
+                        
+                        <button class="search-btn" onclick="searchCourse()">
+                            🔍 다른 골프장 검색
+                        </button>
+                    </div>
+                    
+                    <!-- 3. 참가 인원 -->
+                    <div class="form-group fade-in" style="animation-delay: 0.3s;">
+                        <div class="section-header">
+                            <div class="section-title">
+                                👥 참가 인원
+                            </div>
+                            <div class="section-subtitle">최대 몇 명까지 참가할 수 있나요?</div>
+                        </div>
+                        
+                        <div class="counter-control">
+                            <button class="counter-btn" onclick="decreaseCount()" id="decreaseBtn">−</button>
+                            <div class="counter-value" onclick="enableDirectInput()" style="cursor: pointer;" title="클릭하여 직접 입력">
+                                <span id="participantCount">4</span>명
+                            </div>
+                            <input type="number" id="participantInput" class="counter-input" style="display: none;" min="2" max="200" value="4" onblur="finishDirectInput()" onkeypress="handleInputKeypress(event)">
+                            <button class="counter-btn" onclick="increaseCount()" id="increaseBtn">+</button>
+                        </div>
+                        <div class="hint-text">
+                            💡 나를 포함한 총 인원입니다 (최대 200명)
+                        </div>
+                    </div>
+                    
+                    <!-- 4. 조 편성 방식 -->
+                    <div class="form-group fade-in" style="animation-delay: 0.35s;">
+                        <div class="section-header">
+                            <div class="section-title">
+                                🎯 조 편성 방식
+                            </div>
+                            <div class="section-subtitle">조를 어떻게 구성할까요?</div>
+                        </div>
+                        
+                        <div class="visibility-options">
+                            <div class="visibility-option selected" onclick="selectTeamMethod('random')">
+                                <div class="visibility-icon" style="background: linear-gradient(135deg, #8B5CF6, #A78BFA);">
+                                    🎲
+                                </div>
+                                <div class="visibility-content">
+                                    <div class="visibility-title">자동 랜덤 배정</div>
+                                    <div class="visibility-desc">시스템이 자동으로 랜덤하게 조를 편성합니다</div>
+                                </div>
+                                <div class="radio-check"></div>
+                            </div>
+                            
+                            <div class="visibility-option" onclick="selectTeamMethod('manual')">
+                                <div class="visibility-icon" style="background: linear-gradient(135deg, #F59E0B, #FBBF24);">
+                                    ✋
+                                </div>
+                                <div class="visibility-content">
+                                    <div class="visibility-title">호스트가 수동 배정</div>
+                                    <div class="visibility-desc">호스트가 직접 조를 편성하고 조원을 배정합니다</div>
+                                </div>
+                                <div class="radio-check"></div>
+                            </div>
+                            
+                            <div class="visibility-option" onclick="selectTeamMethod('free')">
+                                <div class="visibility-icon" style="background: linear-gradient(135deg, #10B981, #34D399);">
+                                    🤝
+                                </div>
+                                <div class="visibility-content">
+                                    <div class="visibility-title">참가자 자유 선택</div>
+                                    <div class="visibility-desc">참가자들이 원하는 조를 자유롭게 선택합니다</div>
+                                </div>
+                                <div class="radio-check"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 5. 공개 범위 -->
+                    <div class="form-group fade-in" style="animation-delay: 0.4s;">
+                        <div class="section-header">
+                            <div class="section-title">
+                                🌍 공개 범위
+                                <span class="required-badge">필수</span>
+                            </div>
+                            <div class="section-subtitle">누구에게 공개할까요?</div>
+                        </div>
+                        
+                        <div class="visibility-options">
+                            <div class="visibility-option selected" onclick="selectVisibility('club')">
+                                <div class="visibility-icon" style="background: linear-gradient(135deg, #2E5A87, #4A7BA7);">
+                                    🎓
+                                </div>
+                                <div class="visibility-content">
+                                    <div class="visibility-title">동문회 멤버만</div>
+                                    <div class="visibility-desc">연세대 골프동문회 회원들에게만 공개됩니다</div>
+                                </div>
+                                <div class="radio-check"></div>
+                            </div>
+                            
+                            <div class="visibility-option" onclick="selectVisibility('public')">
+                                <div class="visibility-icon" style="background: linear-gradient(135deg, #28a745, #20c997);">
+                                    🌏
+                                </div>
+                                <div class="visibility-content">
+                                    <div class="visibility-title">전체 공개</div>
+                                    <div class="visibility-desc">모든 골퍼들에게 공개되어 누구나 참여 신청할 수 있습니다</div>
+                                </div>
+                                <div class="radio-check"></div>
+                            </div>
+                            
+                            <div class="visibility-option" onclick="selectVisibility('private')">
+                                <div class="visibility-icon" style="background: linear-gradient(135deg, #6f42c1, #e83e8c);">
+                                    🔒
+                                </div>
+                                <div class="visibility-content">
+                                    <div class="visibility-title">비공개 (초대만)</div>
+                                    <div class="visibility-desc">직접 초대한 사람들만 참여할 수 있습니다</div>
+                                </div>
+                                <div class="radio-check"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 6. 추가 정보 (선택) -->
+                    <div class="form-group fade-in" style="animation-delay: 0.5s;">
+                        <div class="section-header">
+                            <div class="section-title">
+                                📝 추가 정보
+                            </div>
+                            <div class="section-subtitle">라운딩에 대해 더 설명해주세요 (선택)</div>
+                        </div>
+                        
+                        <textarea 
+                            class="form-input" 
+                            rows="4" 
+                            placeholder="예시:
+• 초보자 환영합니다!
+• 즐겁게 라운딩해요
+• 식사는 라운딩 후 클럽하우스에서"
+                            style="resize: none;"
+                        ></textarea>
+                    </div>
+                </div>
+                
+                <div class="bottom-actions">
+                    <button class="btn btn-secondary" onclick="saveDraft()">
+                        💾 임시저장
+                    </button>
+                    <button class="btn" onclick="createRound()">
+                        라운딩 만들기
+                    </button>
+                </div>
+            </div>
+
+            <!-- 페이지 3: 라운딩 상세 -->
+            <div class="page hidden" id="detailPage">
+                <div class="status-bar">
+                    <span>6:10</span>
+                    <span>📶 🔋</span>
+                </div>
+                
+                <div class="header-bar">
+                    <button class="back-btn" onclick="goBackFromDetail()">←</button>
+                    <div class="page-title">라운딩 상세</div>
+                    <button class="menu-btn" onclick="showOptions()">⋮</button>
+                </div>
+                
+                <div class="content-area">
+                    <!-- 동문회 배지 -->
+                    <div style="display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #2E5A87, #4A7BA7); color: white; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; margin-bottom: 16px;">
+                        <span>🎓</span>
+                        <span>연세대 골프동문회</span>
+                    </div>
+                    
+                    <!-- 헤더 정보 -->
+                    <div style="margin-bottom: 32px;">
+                        <h1 style="font-size: 24px; font-weight: 700; color: #1a1a1a; margin-bottom: 12px;">레이크사이드 골프클럽</h1>
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                            <div class="status-badge status-upcoming" style="font-size: 13px;">오늘</div>
+                            <span style="font-size: 14px; color: #666;">📅 1월 25일 (토) 14:00</span>
+                        </div>
+                        <div style="font-size: 14px; color: #666;">
+                            📍 경기도 가평군 북면 이곡리 234
+                        </div>
+                    </div>
+                    
+                    <!-- 기본 정보 -->
+                    <div class="card" style="margin-bottom: 24px;">
+                        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                            <span>ℹ️</span>
+                            <span>기본 정보</span>
+                        </h3>
+                        <div style="display: grid; gap: 12px;">
+                            <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
+                                <span style="color: #666; font-size: 14px;">코스</span>
+                                <span style="font-weight: 600; font-size: 14px;">18홀</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
+                                <span style="color: #666; font-size: 14px;">그린피</span>
+                                <span style="font-weight: 600; font-size: 14px;">120,000원</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
+                                <span style="color: #666; font-size: 14px;">날씨</span>
+                                <span style="font-weight: 600; font-size: 14px;">☀️ 맑음 22°C</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 12px 0;">
+                                <span style="color: #666; font-size: 14px;">공개 범위</span>
+                                <span style="font-weight: 600; font-size: 14px;">🎓 동문회 멤버만</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 참가자 정보 -->
+                    <div class="card" style="margin-bottom: 24px;">
+                        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                            <span>👥</span>
+                            <span>참가자 (4/4)</span>
+                        </h3>
+                        
+                        <div style="display: grid; gap: 12px;">
+                            <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #f8f9fa; border-radius: 12px;">
+                                <div class="avatar" style="background: linear-gradient(135deg, #2E5A87, #4A7BA7); margin: 0;">김</div>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 15px; font-weight: 600; margin-bottom: 2px;">김민수</div>
+                                    <div style="font-size: 12px; color: #666;">평균 89타 • 호스트</div>
+                                </div>
+                                <div style="background: #2E5A87; color: white; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700;">
+                                    호스트
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #f8f9fa; border-radius: 12px;">
+                                <div class="avatar" style="background: linear-gradient(135deg, #28a745, #20c997); margin: 0;">박</div>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 15px; font-weight: 600; margin-bottom: 2px;">박영희</div>
+                                    <div style="font-size: 12px; color: #666;">평균 92타</div>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #f8f9fa; border-radius: 12px;">
+                                <div class="avatar" style="background: linear-gradient(135deg, #fd7e14, #e85d04); margin: 0;">이</div>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 15px; font-weight: 600; margin-bottom: 2px;">이철수</div>
+                                    <div style="font-size: 12px; color: #666;">평균 85타</div>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #f8f9fa; border-radius: 12px;">
+                                <div class="avatar" style="background: linear-gradient(135deg, #6f42c1, #e83e8c); margin: 0;">최</div>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 15px; font-weight: 600; margin-bottom: 2px;">최지원</div>
+                                    <div style="font-size: 12px; color: #666;">평균 90타</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 추가 정보 -->
+                    <div class="card" style="margin-bottom: 24px;">
+                        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                            <span>📝</span>
+                            <span>추가 안내사항</span>
+                        </h3>
+                        <div style="font-size: 14px; color: #666; line-height: 1.8; white-space: pre-line;">
+즐겁게 라운딩해요! 😊
+
+• 초보자도 환영합니다
+• 라운딩 후 클럽하우스에서 식사 예정
+• 골프화와 장갑 준비해주세요
+• 날씨 변동 시 단체 채팅방에 공지하겠습니다
+                        </div>
+                    </div>
+                    
+                    <!-- 위치 정보 -->
+                    <div class="card" style="margin-bottom: 24px;">
+                        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                            <span>🗺️</span>
+                            <span>위치</span>
+                        </h3>
+                        <div style="background: #f8f9fa; border-radius: 12px; padding: 16px; margin-bottom: 12px;">
+                            <div style="font-size: 15px; font-weight: 600; margin-bottom: 6px;">레이크사이드 골프클럽</div>
+                            <div style="font-size: 13px; color: #666; margin-bottom: 12px;">경기도 가평군 북면 이곡리 234</div>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn" style="flex: 1; padding: 10px; font-size: 13px; margin: 0;" onclick="openMap()">
+                                    🗺️ 지도 보기
+                                </button>
+                                <button class="btn btn-secondary" style="flex: 1; padding: 10px; font-size: 13px; margin: 0;" onclick="copyAddress()">
+                                    📋 주소 복사
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bottom-actions">
+                    <button class="btn" onclick="enterStadium()" style="background: linear-gradient(135deg, #2563EB, #1E40AF); margin: 0; box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);">
+                        ⚡ 경기장 입장
+                    </button>
+                </div>
+            </div>
+
+            <!-- 페이지 4: 스코어카드 입력 - 리디자인 -->
+            <div class="page hidden" id="scorecardPage">
+                <div class="status-bar">
+                    <span>6:10</span>
+                    <span>📶 🔋</span>
+                </div>
+                
+                <!-- 헤더: 1줄 요약 + 액션 -->
+                <div class="header-bar" style="padding: 12px 16px;">
+                    <button class="back-btn" onclick="goBackFromScorecard()">←</button>
+                    <div style="flex: 1; text-align: center;">
+                        <div style="font-size: 13px; font-weight: 600; color: #111;">
+                            레이크사이드 • 1/25(토) 14:00 • <span style="color: #2563EB;">E</span>
+                        </div>
+                    </div>
+                    <button class="scorecard-icon-btn" onclick="viewFullScorecard()" title="스코어카드">
+                        📋
+                    </button>
+                </div>
+                
+                <!-- 라운딩 상세 정보 삭제 (더 이상 필요 없음) -->
+                
+                <div class="content-area" style="padding: 16px;">
+                    <!-- 플레이어 선택 칩 (4명 그리드) -->
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 16px;">
+                        <button class="player-chip active" onclick="selectPlayer(1)">
+                            <div class="player-chip-initial">김</div>
+                            <div class="player-chip-name">김민수</div>
+                            <div class="player-chip-score">E</div>
+                        </button>
+                        <button class="player-chip" onclick="selectPlayer(2)">
+                            <div class="player-chip-initial" style="background: #16A34A;">박</div>
+                            <div class="player-chip-name">박영희</div>
+                            <div class="player-chip-score">+2</div>
+                        </button>
+                        <button class="player-chip" onclick="selectPlayer(3)">
+                            <div class="player-chip-initial" style="background: #F59E0B;">이</div>
+                            <div class="player-chip-name">이철수</div>
+                            <div class="player-chip-score">-1</div>
+                        </button>
+                        <button class="player-chip" onclick="selectPlayer(4)">
+                            <div class="player-chip-initial" style="background: #8B5CF6;">최</div>
+                            <div class="player-chip-name">최지원</div>
+                            <div class="player-chip-score">+1</div>
+                        </button>
+                    </div>
+                    
+                    <!-- 현재 홀 카드 (스와이프 가능) -->
+                    <div class="hole-card" id="holeCard">
+                        <div class="hole-card-header">
+                            <button class="hole-nav-btn" onclick="previousHole()">‹</button>
+                            <div style="flex: 1; text-align: center;">
+                                <div style="font-size: 11px; font-weight: 600; color: #6B7280; margin-bottom: 4px;">현재 홀</div>
+                                <div style="display: flex; align-items: baseline; justify-content: center; gap: 12px;">
+                                    <div style="font-size: 32px; font-weight: 700; color: #2563EB; line-height: 1;" id="currentHoleNumber">4번 홀</div>
+                                    <div style="font-size: 11px; color: #9CA3AF;">Par</div>
+                                    <div style="font-size: 32px; font-weight: 700; color: #111; line-height: 1;" id="currentHolePar">4</div>
+                                </div>
+                            </div>
+                            <button class="hole-nav-btn" onclick="nextHoleNav()">›</button>
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-around; padding-top: 16px; border-top: 1px solid #E6E8EC;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 11px; color: #6B7280; margin-bottom: 4px;">거리</div>
+                                <div style="font-size: 16px; font-weight: 700; color: #111;" id="currentHoleDistance">385y</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 11px; color: #6B7280; margin-bottom: 4px;">핸디캡</div>
+                                <div style="font-size: 16px; font-weight: 700; color: #111;" id="currentHoleHcp">7</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 11px; color: #6B7280; margin-bottom: 4px;">현재 스코어</div>
+                                <div style="font-size: 16px; font-weight: 700; color: #2563EB;" id="currentHoleScoreDisplay">E</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- A) 타일 입력 (기본) -->
+                    <div id="relativeScoreInput">
+                        <div class="score-grid">
+                            <button class="score-tile" onclick="inputHoleScore(2)">
+                                <div class="score-tile-number">2</div>
+                                <div class="score-tile-label">🦅 Eagle</div>
+                            </button>
+                            <button class="score-tile" onclick="inputHoleScore(3)">
+                                <div class="score-tile-number">3</div>
+                                <div class="score-tile-label">🪁 Birdie</div>
+                            </button>
+                            <button class="score-tile highlight" onclick="inputHoleScore(4)">
+                                <div class="score-tile-number">4</div>
+                                <div class="score-tile-label">⭐ Par</div>
+                            </button>
+                            <button class="score-tile" onclick="inputHoleScore(5)">
+                                <div class="score-tile-number">5</div>
+                                <div class="score-tile-label">📈 Bogey</div>
+                            </button>
+                            <button class="score-tile" onclick="inputHoleScore(6)">
+                                <div class="score-tile-number">6</div>
+                                <div class="score-tile-label">⬆️ Double</div>
+                            </button>
+                            <button class="score-tile" onclick="switchToNumberPad()">
+                                <div class="score-tile-number">7+</div>
+                                <div class="score-tile-label">⚠️ 기타</div>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- B) 숫자 키패드 모드 -->
+                    <div id="numberPadInput" style="display: none;">
+                        <div style="text-align: center; margin-bottom: 12px;">
+                            <button onclick="switchToTileInput()" style="background: transparent; border: none; color: #2563EB; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit;">
+                                ← 타일로 돌아가기
+                            </button>
+                        </div>
+                        <div class="numpad-grid">
+                            <button class="numpad-key" onclick="inputHoleScore(1)">1</button>
+                            <button class="numpad-key" onclick="inputHoleScore(2)">2</button>
+                            <button class="numpad-key" onclick="inputHoleScore(3)">3</button>
+                            <button class="numpad-key" onclick="inputHoleScore(4)">4</button>
+                            <button class="numpad-key" onclick="inputHoleScore(5)">5</button>
+                            <button class="numpad-key" onclick="inputHoleScore(6)">6</button>
+                            <button class="numpad-key" onclick="inputHoleScore(7)">7</button>
+                            <button class="numpad-key" onclick="inputHoleScore(8)">8</button>
+                            <button class="numpad-key" onclick="inputHoleScore(9)">9</button>
+                            <button class="numpad-key" onclick="inputHoleScore(10)">10</button>
+                            <button class="numpad-key" onclick="inputHoleScore(11)">11</button>
+                            <button class="numpad-key" onclick="inputHoleScore(12)">12+</button>
+                        </div>
+                    </div>
+                    
+                    <!-- 부가정보 접기 -->
+                    <div style="margin-top: 24px;">
+                        <button class="accordion-header" onclick="toggleStats()">
+                            <span>📊 현재까지 통계</span>
+                            <span id="statsToggleIcon">▼</span>
+                        </button>
+                        <div id="statsContent" style="display: none; padding: 12px 0;">
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; text-align: center;">
+                                <div>
+                                    <div style="font-size: 10px; color: #6B7280; margin-bottom: 4px;">이글</div>
+                                    <div style="font-size: 18px; font-weight: 700; color: #F59E0B;">0</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 10px; color: #6B7280; margin-bottom: 4px;">버디</div>
+                                    <div style="font-size: 18px; font-weight: 700; color: #16A34A;">1</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 10px; color: #6B7280; margin-bottom: 4px;">파</div>
+                                    <div style="font-size: 18px; font-weight: 700; color: #2563EB;">2</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 10px; color: #6B7280; margin-bottom: 4px;">보기+</div>
+                                    <div style="font-size: 18px; font-weight: 700; color: #DC2626;">0</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 자동 저장 토스트 -->
+                <div id="saveToast" class="toast">
+                    ✓ 4번 홀 김민수 Par 저장됨
+                </div>
+                
+                <!-- 하단 고정 CTA -->
+                <div class="bottom-cta">
+                    <button class="undo-btn" onclick="undoScore()" title="되돌리기">↶</button>
+                    <button id="nextHoleBtn" class="btn-primary-full" onclick="nextHole()">입력 완료 & 다음 →</button>
+                </div>
+                
+                <!-- 비활성 안내 -->
+                <div id="nextBtnHint" style="text-align: center; font-size: 11px; color: #9CA3AF; padding: 8px 16px 16px;">
+                    점수를 선택하면 '다음'이 활성화돼요
+                </div>
+            </div>
+
+            <!-- 페이지 5: 전체 스코어카드 -->
+            <div class="page hidden" id="fullScorecardPage">
+                <div class="status-bar">
+                    <span>6:10</span>
+                    <span>📶 🔋</span>
+                </div>
+                
+                <div class="header-bar">
+                    <button class="back-btn" onclick="goBackToScoreInput()">←</button>
+                    <div class="page-title">전체 스코어카드</div>
+                    <div style="width: 44px;"></div>
+                </div>
+                
+                <div class="content-area">
+                    <!-- 플레이어 선택 -->
+                    <div style="margin-bottom: 20px;">
+                        <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px;">
+                            <button class="player-tab-small active" onclick="selectPlayer(1)">
+                                <div class="player-avatar-small">김</div>
+                                <div style="font-size: 11px; font-weight: 600;">김민수</div>
+                                <div style="font-size: 13px; font-weight: 700; color: #2E5A87;">E</div>
+                            </button>
+                            <button class="player-tab-small" onclick="selectPlayer(2)">
+                                <div class="player-avatar-small" style="background: linear-gradient(135deg, #28a745, #20c997);">박</div>
+                                <div style="font-size: 11px; font-weight: 600;">박영희</div>
+                                <div style="font-size: 13px; font-weight: 700; color: #2E5A87;">+2</div>
+                            </button>
+                            <button class="player-tab-small" onclick="selectPlayer(3)">
+                                <div class="player-avatar-small" style="background: linear-gradient(135deg, #fd7e14, #e85d04);">이</div>
+                                <div style="font-size: 11px; font-weight: 600;">이철수</div>
+                                <div style="font-size: 13px; font-weight: 700; color: #2E5A87;">-1</div>
+                            </button>
+                            <button class="player-tab-small" onclick="selectPlayer(4)">
+                                <div class="player-avatar-small" style="background: linear-gradient(135deg, #6f42c1, #e83e8c);">최</div>
+                                <div style="font-size: 11px; font-weight: 600;">최지원</div>
+                                <div style="font-size: 13px; font-weight: 700; color: #2E5A87;">+1</div>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Front 9 스코어카드 -->
+                    <div class="card" style="padding: 16px; margin-bottom: 16px;">
+                        <div style="font-size: 15px; font-weight: 700; margin-bottom: 12px; color: #2E5A87;">Front 9</div>
+                        <div class="full-scorecard-table">
+                            <div class="full-scorecard-row header">
+                                <div class="full-scorecard-cell">홀</div>
+                                <div class="full-scorecard-cell">1</div>
+                                <div class="full-scorecard-cell">2</div>
+                                <div class="full-scorecard-cell">3</div>
+                                <div class="full-scorecard-cell">4</div>
+                                <div class="full-scorecard-cell">5</div>
+                                <div class="full-scorecard-cell">6</div>
+                                <div class="full-scorecard-cell">7</div>
+                                <div class="full-scorecard-cell">8</div>
+                                <div class="full-scorecard-cell">9</div>
+                                <div class="full-scorecard-cell total">OUT</div>
+                            </div>
+                            <div class="full-scorecard-row">
+                                <div class="full-scorecard-cell label">Par</div>
+                                <div class="full-scorecard-cell">4</div>
+                                <div class="full-scorecard-cell">3</div>
+                                <div class="full-scorecard-cell">5</div>
+                                <div class="full-scorecard-cell">4</div>
+                                <div class="full-scorecard-cell">4</div>
+                                <div class="full-scorecard-cell">3</div>
+                                <div class="full-scorecard-cell">4</div>
+                                <div class="full-scorecard-cell">5</div>
+                                <div class="full-scorecard-cell">4</div>
+                                <div class="full-scorecard-cell total">36</div>
+                            </div>
+                            <div class="full-scorecard-row score">
+                                <div class="full-scorecard-cell label">타수</div>
+                                <div class="full-scorecard-cell par" onclick="editHoleScore(1)">4</div>
+                                <div class="full-scorecard-cell par" onclick="editHoleScore(2)">3</div>
+                                <div class="full-scorecard-cell par" onclick="editHoleScore(3)">5</div>
+                                <div class="full-scorecard-cell empty" onclick="editHoleScore(4)">-</div>
+                                <div class="full-scorecard-cell empty" onclick="editHoleScore(5)">-</div>
+                                <div class="full-scorecard-cell empty" onclick="editHoleScore(6)">-</div>
+                                <div class="full-scorecard-cell empty" onclick="editHoleScore(7)">-</div>
+                                <div class="full-scorecard-cell empty" onclick="editHoleScore(8)">-</div>
+                                <div class="full-scorecard-cell empty" onclick="editHoleScore(9)">-</div>
+                                <div class="full-scorecard-cell total">12</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Back 9 스코어카드 -->
+                    <div class="card" style="padding: 16px; margin-bottom: 16px;">
+                        <div style="font-size: 15px; font-weight: 700; margin-bottom: 12px; color: #2E5A87;">Back 9</div>
+                        <div class="full-scorecard-table">
+                            <div class="full-scorecard-row header">
+                                <div class="full-scorecard-cell">홀</div>
+                                <div class="full-scorecard-cell">10</div>
+                                <div class="full-scorecard-cell">11</div>
+                                <div class="full-scorecard-cell">12</div>
+                                <div class="full-scorecard-cell">13</div>
+                                <div class="full-scorecard-cell">14</div>
+                                <div class="full-scorecard-cell">15</div>
+                                <div class="full-scorecard-cell">16</div>
+                                <div class="full-scorecard-cell">17</div>
+                                <div class="full-scorecard-cell">18</div>
+                                <div class="full-scorecard-cell total">IN</div>
+                            </div>
+                            <div class="full-scorecard-row">
+                                <div class="full-scorecard-cell label">Par</div>
+                                <div class="full-scorecard-cell">4</div>
+                                <div class="full-scorecard-cell">5</div>
+                                <div class="full-scorecard-cell">3</div>
+                                <div class="full-scorecard-cell">4</div>
+                                <div class="full-scorecard-cell">4</div>
+                                <div class="full-scorecard-cell">5</div>
+                                <div class="full-scorecard-cell">3</div>
+                                <div class="full-scorecard-cell">4</div>
+                                <div class="full-scorecard-cell">4</div>
+                                <div class="full-scorecard-cell total">36</div>
+                            </div>
+                            <div class="full-scorecard-row score">
+                                <div class="full-scorecard-cell label">타수</div>
+                                <div class="full-scorecard-cell empty" onclick="editHoleScore(10)">-</div>
+                                <div class="full-scorecard-cell empty" onclick="editHoleScore(11)">-</div>
+                                <div class="full-scorecard-cell empty" onclick="editHoleScore(12)">-</div>
+                                <div class="full-scorecard-cell empty" onclick="editHoleScore(13)">-</div>
+                                <div class="full-scorecard-cell empty" onclick="editHoleScore(14)">-</div>
+                                <div class="full-scorecard-cell empty" onclick="editHoleScore(15)">-</div>
+                                <div class="full-scorecard-cell empty" onclick="editHoleScore(16)">-</div>
+                                <div class="full-scorecard-cell empty" onclick="editHoleScore(17)">-</div>
+                                <div class="full-scorecard-cell empty" onclick="editHoleScore(18)">-</div>
+                                <div class="full-scorecard-cell total">0</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 총합 -->
+                    <div class="card" style="background: linear-gradient(135deg, #2E5A87, #4A7BA7); color: white; padding: 20px;">
+                        <div style="display: flex; justify-content: space-around; align-items: center;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 13px; opacity: 0.9; margin-bottom: 4px;">Total Par</div>
+                                <div style="font-size: 32px; font-weight: 700;">72</div>
+                            </div>
+                            <div style="width: 2px; height: 40px; background: rgba(255,255,255,0.3);"></div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 13px; opacity: 0.9; margin-bottom: 4px;">Total Score</div>
+                                <div style="font-size: 32px; font-weight: 700;">12</div>
+                            </div>
+                            <div style="width: 2px; height: 40px; background: rgba(255,255,255,0.3);"></div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 13px; opacity: 0.9; margin-bottom: 4px;">vs Par</div>
+                                <div style="font-size: 32px; font-weight: 700;">E</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bottom-actions" style="padding: 12px 24px 28px;">
+                    <button class="btn" onclick="goBackToScoreInput()" style="margin: 0; background: linear-gradient(135deg, #28a745, #20c997);">
+                        스코어 입력으로 돌아가기
+                    </button>
+                </div>
+            </div>
+        </div>
+            <!-- 페이지 6: 경기장 모드 -->
+            <div class="page hidden" id="stadiumPage">
+                <div class="status-bar">
+                    <span>6:10</span>
+                    <span>📶 🔋</span>
+                </div>
+                
+                <div class="header-bar">
+                    <button class="back-btn" onclick="exitStadium()">←</button>
+                    <div class="page-title">실시간 경기</div>
+                    <div style="width: 44px;"></div>
+                </div>
+                
+                <div class="content-area" style="background: #F5F7FA;">
+                    <!-- 라운딩 정보 -->
+                    <div style="background: white; padding: 20px; border-radius: 16px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                        <div style="text-align: center; margin-bottom: 12px;">
+                            <div style="font-size: 12px; color: #6B7280; margin-bottom: 4px;">레이크사이드 골프클럽</div>
+                            <div style="font-size: 20px; font-weight: 700; color: #111;">1월 25일 (토) 14:00</div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; text-align: center;">
+                            <div>
+                                <div style="font-size: 10px; color: #6B7280;">참가자</div>
+                                <div style="font-size: 16px; font-weight: 700;">4명</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 10px; color: #6B7280;">홀</div>
+                                <div style="font-size: 16px; font-weight: 700;">18홀</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 10px; color: #6B7280;">날씨</div>
+                                <div style="font-size: 16px; font-weight: 700;">☀️ 22°</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 10px; color: #6B7280;">경기</div>
+                                <div style="font-size: 16px; font-weight: 700; color: #10B981;">진행중</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 실시간 리더보드 -->
+                    <div style="background: white; border-radius: 16px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; color: #111;">
+                            <span>🏆</span>
+                            <span>실시간 리더보드</span>
+                        </h3>
+                        
+                        <div style="display: grid; gap: 12px;">
+                            <!-- 1위 -->
+                            <div style="display: flex; align-items: center; gap: 12px; padding: 16px; background: linear-gradient(135deg, #FEF3C7, #FDE68A); border-radius: 12px;">
+                                <div style="font-size: 24px; font-weight: 700; width: 32px; color: #92400E;">1</div>
+                                <div class="avatar" style="background: linear-gradient(135deg, #fd7e14, #e85d04); margin: 0;">이</div>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 15px; font-weight: 700; color: #111;">이철수</div>
+                                    <div style="font-size: 12px; color: #78716C;">평균 85타</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-size: 24px; font-weight: 700; color: #16A34A;">-1</div>
+                                    <div style="font-size: 11px; color: #78716C;">언더파</div>
+                                </div>
+                            </div>
+                            
+                            <!-- 2위 -->
+                            <div style="display: flex; align-items: center; gap: 12px; padding: 14px; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 12px;">
+                                <div style="font-size: 20px; font-weight: 700; width: 32px; color: #6B7280;">2</div>
+                                <div class="avatar" style="background: linear-gradient(135deg, #2E5A87, #4A7BA7); margin: 0;">김</div>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 15px; font-weight: 600; color: #111;">김민수</div>
+                                    <div style="font-size: 12px; color: #6B7280;">평균 89타</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-size: 20px; font-weight: 700; color: #2563EB;">E</div>
+                                    <div style="font-size: 11px; color: #6B7280;">이븐파</div>
+                                </div>
+                            </div>
+                            
+                            <!-- 3위 -->
+                            <div style="display: flex; align-items: center; gap: 12px; padding: 14px; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 12px;">
+                                <div style="font-size: 20px; font-weight: 700; width: 32px; color: #6B7280;">3</div>
+                                <div class="avatar" style="background: linear-gradient(135deg, #6f42c1, #e83e8c); margin: 0;">최</div>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 15px; font-weight: 600; color: #111;">최지원</div>
+                                    <div style="font-size: 12px; color: #6B7280;">평균 90타</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-size: 20px; font-weight: 700; color: #F59E0B;">+1</div>
+                                    <div style="font-size: 11px; color: #6B7280;">오버파</div>
+                                </div>
+                            </div>
+                            
+                            <!-- 4위 -->
+                            <div style="display: flex; align-items: center; gap: 12px; padding: 14px; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 12px;">
+                                <div style="font-size: 20px; font-weight: 700; width: 32px; color: #6B7280;">4</div>
+                                <div class="avatar" style="background: linear-gradient(135deg, #28a745, #20c997); margin: 0;">박</div>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 15px; font-weight: 600; color: #111;">박영호</div>
+                                    <div style="font-size: 12px; color: #6B7280;">평균 92타</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-size: 20px; font-weight: 700; color: #F59E0B;">+2</div>
+                                    <div style="font-size: 11px; color: #6B7280;">오버파</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 현재 홀 정보 -->
+                    <div style="background: white; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                        <div style="font-size: 14px; font-weight: 600; color: #6B7280; margin-bottom: 8px;">현재 진행 중</div>
+                        <div style="font-size: 24px; font-weight: 700; color: #111;">4번 홀 • Par 4</div>
+                        <div style="font-size: 13px; color: #6B7280; margin-top: 4px;">385y • 핸디캡 7</div>
+                    </div>
+                </div>
+                
+                <div class="bottom-actions">
+                    <button class="btn" onclick="startScoreFromStadium()" style="background: linear-gradient(135deg, #10B981, #059669); margin: 0; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);">
+                        📊 스코어 입력하기
+                    </button>
+                </div>
+            </div>
+
+        <!-- 스코어 입력 모달 삭제 (더 이상 필요 없음) -->
+
+        <style>
+            .full-scorecard-table {
+                width: 100%;
+                overflow-x: auto;
+            }
+            
+            .full-scorecard-row {
+                display: grid;
+                grid-template-columns: 35px repeat(9, 1fr) 40px;
+                border-bottom: 1px solid #e0e0e0;
+                min-width: 500px;
+            }
+            
+            .full-scorecard-row:last-child {
+                border-bottom: none;
+            }
+            
+            .full-scorecard-row.header {
+                background: #2E5A87;
+                color: white;
+            }
+            
+            .full-scorecard-cell {
+                padding: 10px 4px;
+                text-align: center;
+                font-size: 13px;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-right: 1px solid #e0e0e0;
+            }
+            
+            .full-scorecard-cell:last-child {
+                border-right: none;
+            }
+            
+            .full-scorecard-cell.label {
+                background: #f8f9fa;
+                font-weight: 700;
+                font-size: 11px;
+            }
+            
+            .full-scorecard-cell.total {
+                background: #f8f9fa;
+                font-weight: 700;
+            }
+            
+            .full-scorecard-row.score .full-scorecard-cell {
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+            
+            .full-scorecard-row.score .full-scorecard-cell:hover:not(.label):not(.total) {
+                background: #e3f2fd;
+            }
+            
+            .full-scorecard-cell.par {
+                color: #2196f3;
+                font-weight: 700;
+            }
+            
+            .full-scorecard-cell.birdie {
+                color: #28a745;
+                font-weight: 700;
+            }
+            
+            .full-scorecard-cell.bogey {
+                color: #ff9800;
+                font-weight: 700;
+            }
+            
+            .full-scorecard-cell.empty {
+                color: #ccc;
+            }
+
+        <style>
+            
+            /* 리디자인 스타일 토큰 */
+            
+            /* 스코어카드 아이콘 버튼 */
+            .scorecard-icon-btn {
+                width: 44px;
+                height: 44px;
+                background: white;
+                border: 2px solid #E6E8EC;
+                border-radius: 12px;
+                font-size: 20px;
+                cursor: pointer;
+                transition: all 0.2s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-family: inherit;
+            }
+            
+            .scorecard-icon-btn:hover {
+                background: #F3F4F6;
+                border-color: #2563EB;
+            }
+            
+            .scorecard-icon-btn:active {
+                transform: scale(0.9);
+            }
+            
+            /* 현재 홀 카드 */
+            .hole-card {
+                background: white;
+                border: 1px solid #E6E8EC;
+                border-radius: 16px;
+                padding: 16px;
+                margin-bottom: 12px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            }
+            
+            .hole-card-header {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                margin-bottom: 12px;
+            }
+            
+            .hole-nav-btn {
+                width: 44px;
+                height: 44px;
+                border: 1px solid #E6E8EC;
+                background: white;
+                border-radius: 12px;
+                font-size: 24px;
+                font-weight: 700;
+                color: #2563EB;
+                cursor: pointer;
+                transition: all 0.2s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                font-family: inherit;
+            }
+            
+            .hole-nav-btn:hover {
+                background: #F3F4F6;
+                border-color: #2563EB;
+            }
+            
+            .hole-nav-btn:active {
+                transform: scale(0.95);
+            }
+            
+            .hole-nav-btn:disabled {
+                opacity: 0.3;
+                cursor: not-allowed;
+            }
+            
+            .icon-btn {
+                width: 32px;
+                height: 32px;
+                border: none;
+                background: transparent;
+                font-size: 16px;
+                cursor: pointer;
+                color: #111;
+                border-radius: 8px;
+                transition: background 0.2s;
+            }
+            
+            .icon-btn:hover {
+                background: #F3F4F6;
+            }
+            
+            /* 18홀 점 인디케이터 - 제거됨 */
+            
+            /* 플레이어 칩 */
+            .player-chip {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 12px;
+                background: white;
+                border: 1px solid #E6E8EC;
+                border-radius: 12px;
+                cursor: pointer;
+                transition: all 0.2s;
+                min-height: 44px;
+                font-family: inherit;
+            }
+            
+            .player-chip:hover:not(.active) {
+                background: #F9FAFB;
+                border-color: #D1D5DB;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            }
+            
+            .player-chip.active {
+                background: #2563EB;
+                border-color: #2563EB;
+                transform: scale(1.02);
+                box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+            }
+            
+            .player-chip.active .player-chip-name,
+            .player-chip.active .player-chip-score {
+                color: white;
+            }
+            
+            .player-chip.active .player-chip-initial {
+                background: white;
+                color: #2563EB;
+            }
+            
+            .player-chip-initial {
+                width: 28px;
+                height: 28px;
+                border-radius: 50%;
+                background: #2563EB;
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 700;
+                font-size: 12px;
+                flex-shrink: 0;
+            }
+            
+            .player-chip-name {
+                font-size: 12px;
+                font-weight: 600;
+                color: #111;
+                white-space: nowrap;
+                flex: 1;
+                text-align: left;
+            }
+            
+            .player-chip-score {
+                font-size: 13px;
+                font-weight: 700;
+                color: #2563EB;
+                margin-left: auto;
+                padding-left: 8px;
+            }
+            
+            /* 세그먼트 버튼 */
+            .segment-btn {
+                flex: 1;
+                padding: 8px 16px;
+                border: none;
+                background: transparent;
+                color: #6B7280;
+                font-size: 13px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s;
+                border-radius: 8px;
+                font-family: inherit;
+            }
+            
+            .segment-btn.active {
+                background: white;
+                color: #111;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            }
+            
+            /* 스코어 타일 그리드 */
+            .score-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            
+            .score-tile {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 20px 16px;
+                background: #FAFAFA;
+                border: 1px solid #E6E8EC;
+                border-radius: 12px;
+                cursor: pointer;
+                transition: all 0.12s;
+                font-family: inherit;
+                min-height: 88px;
+                position: relative;
+            }
+            
+            .score-tile.highlight {
+                background: #FAFAFA;
+                border-color: #E6E8EC;
+            }
+            
+            .score-tile:hover:not(.selected) {
+                background: #F9FAFB;
+                border-color: #9CA3AF;
+            }
+            
+            .score-tile:active {
+                transform: scale(0.95);
+            }
+            
+            /* 선택 시 체크 표시 */
+            .score-tile.selected {
+                background: #DBEAFE;
+                border-color: #2563EB;
+                border-width: 2px;
+            }
+            
+            .score-tile.selected::after {
+                content: '✓';
+                position: absolute;
+                top: 8px;
+                right: 8px;
+                width: 20px;
+                height: 20px;
+                background: #16A34A;
+                color: white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 12px;
+                font-weight: 700;
+                animation: checkPop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            }
+            
+            @keyframes checkPop {
+                0% {
+                    transform: scale(0);
+                    opacity: 0;
+                }
+                100% {
+                    transform: scale(1);
+                    opacity: 1;
+                }
+            }
+            
+            .score-tile-number {
+                font-size: 36px;
+                font-weight: 700;
+                color: #111;
+                line-height: 1;
+                margin-bottom: 6px;
+            }
+            
+            .score-tile-label {
+                font-size: 12px;
+                font-weight: 600;
+                color: #6B7280;
+            }
+            
+            /* 숫자 키패드 */
+            .numpad-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px;
+                max-width: 300px;
+                margin: 0 auto;
+            }
+            
+            .numpad-key {
+                padding: 20px;
+                background: #FAFAFA;
+                border: 1px solid #E6E8EC;
+                border-radius: 12px;
+                font-size: 24px;
+                font-weight: 700;
+                color: #111;
+                cursor: pointer;
+                transition: all 0.12s;
+                font-family: inherit;
+                min-height: 64px;
+            }
+            
+            .numpad-key:active {
+                transform: scale(0.95);
+                background: #EFF6FF;
+                border-color: #2563EB;
+            }
+            
+            /* 아코디언 헤더 */
+            .accordion-header {
+                width: 100%;
+                padding: 12px 0;
+                background: transparent;
+                border: none;
+                border-bottom: 1px solid #E6E8EC;
+                font-size: 13px;
+                font-weight: 600;
+                color: #111;
+                cursor: pointer;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-family: inherit;
+            }
+            
+            /* 토스트 */
+            .toast {
+                position: fixed;
+                bottom: 100px;
+                left: 50%;
+                transform: translateX(-50%) translateY(100px);
+                background: #16A34A;
+                color: white;
+                padding: 12px 20px;
+                border-radius: 12px;
+                font-size: 13px;
+                font-weight: 600;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                opacity: 0;
+                transition: all 0.3s;
+                z-index: 1000;
+            }
+            
+            .toast.show {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+            
+            /* 하단 고정 CTA */
+            .bottom-cta {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: white;
+                border-top: 1px solid #E6E8EC;
+                padding: 16px 16px 12px;
+                display: flex;
+                gap: 8px;
+                align-items: center;
+                box-shadow: 0 -2px 8px rgba(0,0,0,0.04);
+            }
+            
+            .undo-btn {
+                width: 44px;
+                height: 44px;
+                border: 1px solid #E6E8EC;
+                background: white;
+                border-radius: 12px;
+                font-size: 20px;
+                font-weight: 700;
+                color: #6B7280;
+                cursor: pointer;
+                transition: all 0.2s;
+                flex-shrink: 0;
+                font-family: inherit;
+            }
+            
+            .undo-btn:hover {
+                background: #F3F4F6;
+                border-color: #D1D5DB;
+            }
+            
+            .undo-btn:active {
+                transform: scale(0.9);
+            }
+            
+            .btn-ghost {
+                flex: 1;
+                padding: 12px 16px;
+                background: transparent;
+                border: 1px solid #E6E8EC;
+                border-radius: 12px;
+                font-size: 14px;
+                font-weight: 600;
+                color: #6B7280;
+                cursor: pointer;
+                transition: all 0.2s;
+                font-family: inherit;
+                min-height: 44px;
+            }
+            
+            .btn-ghost:hover {
+                background: #F3F4F6;
+            }
+            
+            .btn-primary {
+                flex: 2;
+                padding: 12px 16px;
+                background: #16A34A;
+                border: none;
+                border-radius: 12px;
+                font-size: 14px;
+                font-weight: 600;
+                color: white;
+                cursor: pointer;
+                transition: all 0.2s;
+                font-family: inherit;
+                min-height: 44px;
+            }
+            
+            .btn-primary:disabled {
+                background: #E6E8EC;
+                color: #9CA3AF;
+                cursor: not-allowed;
+            }
+            
+            .btn-primary:not(:disabled):hover {
+                background: #15803D;
+            }
+            
+            .btn-primary:not(:disabled):active {
+                transform: scale(0.98);
+            }
+            
+            .btn-primary-full {
+                flex: 1;
+                padding: 14px 16px;
+                background: #16A34A;
+                border: none;
+                border-radius: 12px;
+                font-size: 15px;
+                font-weight: 600;
+                color: white;
+                cursor: pointer;
+                transition: all 0.2s;
+                font-family: inherit;
+                min-height: 48px;
+            }
+            
+            .btn-primary-full:disabled {
+                background: #E6E8EC;
+                color: #9CA3AF;
+                cursor: not-allowed;
+            }
+            
+            .btn-primary-full:not(:disabled):hover {
+                background: #15803D;
+            }
+            
+            .btn-primary-full:not(:disabled):active {
+                transform: scale(0.98);
+            }
+            
+            .player-tab-small {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 4px;
+                padding: 10px 12px;
+                background: #f8f9fa;
+                border: 2px solid transparent;
+                border-radius: 12px;
+                cursor: pointer;
+                transition: all 0.2s;
+                min-width: 70px;
+                font-family: inherit;
+                scroll-snap-align: start;
+            }
+            
+            .player-tab-small.active {
+                background: white;
+                border-color: #2E5A87;
+                box-shadow: 0 2px 8px rgba(46, 90, 135, 0.2);
+                transform: scale(1.05);
+            }
+            
+            .player-avatar-small {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, #2E5A87, #4A7BA7);
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 700;
+                font-size: 13px;
+            }
+            
+            .hole-pip {
+                flex: 1;
+                height: 8px;
+                background: #e0e0e0;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: all 0.2s;
+                padding: 0;
+                min-width: 0;
+            }
+            
+            .hole-pip.completed {
+                background: #28a745;
+            }
+            
+            .hole-pip.active {
+                background: #2E5A87;
+                height: 12px;
+                border-radius: 6px;
+                box-shadow: 0 0 0 3px rgba(46, 90, 135, 0.2);
+            }
+            
+            .hole-pip:hover {
+                transform: scaleY(1.5);
+            }
+            
+            .input-mode-btn {
+                padding: 8px 20px;
+                border: 2px solid #dee2e6;
+                border-radius: 20px;
+                background: white;
+                color: #666;
+                font-size: 13px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s;
+                font-family: inherit;
+            }
+            
+            .input-mode-btn.active {
+                background: #2E5A87;
+                color: white;
+                border-color: #2E5A87;
+            }
+            
+            .number-pad-btn {
+                padding: 20px;
+                background: white;
+                border: 2px solid #dee2e6;
+                border-radius: 12px;
+                font-size: 24px;
+                font-weight: 700;
+                color: #1a1a1a;
+                cursor: pointer;
+                transition: all 0.2s;
+                font-family: inherit;
+                min-height: 44px;
+                min-width: 44px;
+            }
+            
+            .number-pad-btn:active {
+                transform: scale(0.95);
+                background: #e3f2fd;
+                border-color: #2E5A87;
+            }
+            
+            .btn-ghost {
+                background: transparent !important;
+                color: #666 !important;
+                border: 1px solid #dee2e6 !important;
+            }
+            
+            .btn-icon {
+                width: 44px;
+                height: 44px;
+                min-width: 44px;
+                padding: 0;
+                background: white;
+                border: 2px solid #dee2e6;
+                border-radius: 12px;
+                font-size: 20px;
+                font-weight: 700;
+                color: #2E5A87;
+                cursor: pointer;
+                transition: all 0.2s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-family: inherit;
+            }
+            
+            .btn-icon:hover {
+                background: #f8f9fa;
+                border-color: #2E5A87;
+            }
+            
+            .btn-icon:active {
+                transform: scale(0.9);
+            }
+            
+            .score-input-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            
+            .score-input-btn {
+                padding: 24px 16px;
+                border: 3px solid #e0e0e0;
+                border-radius: 16px;
+                background: white;
+                cursor: pointer;
+                transition: all 0.2s;
+                font-family: inherit;
+                text-align: center;
+                min-height: 88px;
+                min-width: 44px;
+            }
+            
+            .score-input-btn:active {
+                transform: scale(0.95);
+            }
+            
+            .score-input-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+            }
+            
+            .score-input-value {
+                font-size: 36px;
+                font-weight: 700;
+                margin-bottom: 6px;
+                line-height: 1;
+            }
+            
+            .score-input-label {
+                font-size: 13px;
+                font-weight: 600;
+                color: #666;
+            }
+            
+            .score-input-btn.eagle {
+                border-color: #ffd700;
+                background: linear-gradient(to bottom, #fffbeb, white);
+            }
+            
+            .score-input-btn.eagle:hover {
+                border-color: #ffc107;
+                background: #fffbeb;
+            }
+            
+            .score-input-btn.birdie {
+                border-color: #4caf50;
+                background: linear-gradient(to bottom, #e8f5e9, white);
+            }
+            
+            .score-input-btn.birdie:hover {
+                border-color: #2e7d32;
+                background: #e8f5e9;
+            }
+            
+            .score-input-btn.par {
+                border-color: #2196f3;
+                background: linear-gradient(to bottom, #e3f2fd, white);
+            }
+            
+            .score-input-btn.par:hover {
+                border-color: #1976d2;
+                background: #e3f2fd;
+            }
+            
+            .score-input-btn.bogey {
+                border-color: #ff9800;
+                background: linear-gradient(to bottom, #fff3e0, white);
+            }
+            
+            .score-input-btn.bogey:hover {
+                border-color: #f57c00;
+                background: #fff3e0;
+            }
+            
+            .score-input-btn.double {
+                border-color: #f44336;
+                background: linear-gradient(to bottom, #ffebee, white);
+            }
+            
+            .score-input-btn.double:hover {
+                border-color: #c62828;
+                background: #ffebee;
+            }
+            
+            .score-input-btn.other {
+                border-color: #9e9e9e;
+                background: linear-gradient(to bottom, #f5f5f5, white);
+            }
+            
+            .score-input-btn.other:hover {
+                border-color: #616161;
+                background: #f5f5f5;
+            }
+        </style>
+
+        <!-- 동문회 선택 모달 -->
+        <div class="modal-overlay" id="clubModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title">라운딩 만들기</div>
+                    <div class="modal-subtitle">어떤 동문회로 예약하시겠어요?</div>
+                </div>
+                
+                <div class="modal-content">
+                    <!-- 개인 라운딩 옵션 -->
+                    <div class="club-option personal-option" onclick="selectClub('personal', '👤', '개인 라운딩')">
+                        <div class="club-icon" style="background: linear-gradient(135deg, #6f42c1, #e83e8c);">
+                            👤
+                        </div>
+                        <div class="club-info">
+                            <div class="club-name">개인 라운딩</div>
+                            <div class="club-meta">혼자 또는 지인들과 함께</div>
+                        </div>
+                        <div class="radio-check"></div>
+                    </div>
+                    
+                    <!-- 동문회 옵션들 -->
+                    <div class="club-option" onclick="selectClub('yonsei', '🎓', '연세대 골프동문회')">
+                        <div class="club-icon" style="background: linear-gradient(135deg, #2E5A87, #4A7BA7);">
+                            🎓
+                        </div>
+                        <div class="club-info">
+                            <div class="club-name">연세대 골프동문회</div>
+                            <div class="club-meta">회원 256명 • 활동중</div>
+                        </div>
+                        <div class="radio-check"></div>
+                    </div>
+                    
+                    <div class="club-option" onclick="selectClub('lions', '🦁', '라이온스 골프모임')">
+                        <div class="club-icon" style="background: linear-gradient(135deg, #fd7e14, #e85d04);">
+                            🦁
+                        </div>
+                        <div class="club-info">
+                            <div class="club-name">라이온스 골프모임</div>
+                            <div class="club-meta">회원 89명 • 활동중</div>
+                        </div>
+                        <div class="radio-check"></div>
+                    </div>
+                    
+                    <div class="club-option" onclick="selectClub('company', '🏢', '삼성전자 골프동호회')">
+                        <div class="club-icon" style="background: linear-gradient(135deg, #28a745, #20c997);">
+                            🏢
+                        </div>
+                        <div class="club-info">
+                            <div class="club-name">삼성전자 골프동호회</div>
+                            <div class="club-meta">회원 142명 • 활동중</div>
+                        </div>
+                        <div class="radio-check"></div>
+                    </div>
+                    
+                    <div class="club-option" onclick="selectClub('jeonju', '🏞️', '전주 골프클럽')">
+                        <div class="club-icon" style="background: linear-gradient(135deg, #17a2b8, #138496);">
+                            🏞️
+                        </div>
+                        <div class="club-info">
+                            <div class="club-name">전주 골프클럽</div>
+                            <div class="club-meta">회원 67명 • 활동중</div>
+                        </div>
+                        <div class="radio-check"></div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button class="btn" id="confirmBtn" onclick="confirmSelection()" disabled style="opacity: 0.5;">
+                        다음
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedClub = null;
+        let selectedClubIcon = null;
+        let selectedClubName = null;
+        let participantCount = 4;
+        let selectedVisibility = 'club';
+        let selectedCourseName = 'lakeside';
+        let selectedTeamMethod = 'random';  // 조 편성 방식: random, manual, free
+        
+        // 동문회 선택 모달 열기
+        function openClubModal() {
+            document.getElementById('clubModal').classList.add('active');
+        }
+        
+        // 모달 닫기
+        function closeModal() {
+            document.getElementById('clubModal').classList.remove('active');
+            const options = document.querySelectorAll('.club-option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            selectedClub = null;
+            document.getElementById('confirmBtn').disabled = true;
+            document.getElementById('confirmBtn').style.opacity = '0.5';
+        }
+        
+        // 동문회 선택
+        function selectClub(clubId, icon, name) {
+            const options = document.querySelectorAll('.club-option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            
+            event.currentTarget.classList.add('selected');
+            selectedClub = clubId;
+            selectedClubIcon = icon;
+            selectedClubName = name;
+            
+            document.getElementById('confirmBtn').disabled = false;
+            document.getElementById('confirmBtn').style.opacity = '1';
+        }
+        
+        // 선택 확인 및 페이지 전환
+        function confirmSelection() {
+            if (!selectedClub) return;
+            
+            // 선택한 동문회 정보 표시
+            document.getElementById('clubBadgeIcon').textContent = selectedClubIcon;
+            document.getElementById('clubBadgeName').textContent = selectedClubName;
+            
+            // 페이지 전환
+            document.getElementById('homePage').classList.add('hidden');
+            document.getElementById('createPage').style.transform = 'translateX(0)';
+            
+            closeModal();
+        }
+        
+        // 홈으로 돌아가기
+        function goBackToHome() {
+            if (confirm('작성 중인 내용이 사라집니다. 나가시겠습니까?')) {
+                document.getElementById('homePage').classList.remove('hidden');
+                document.getElementById('createPage').style.transform = 'translateX(100%)';
+            }
+        }
+        
+        // 모달 외부 클릭시 닫기
+        document.getElementById('clubModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+        
+        // 인원 카운터
+        function increaseCount() {
+            if (participantCount < 200) {
+                participantCount++;
+                updateCounter();
+            }
+        }
+        
+        function decreaseCount() {
+            if (participantCount > 2) {
+                participantCount--;
+                updateCounter();
+            }
+        }
+        
+        function updateCounter() {
+            document.getElementById('participantCount').textContent = participantCount;
+            document.getElementById('participantInput').value = participantCount;
+            document.getElementById('decreaseBtn').disabled = participantCount <= 2;
+            document.getElementById('increaseBtn').disabled = participantCount >= 200;
+        }
+        
+        // 직접 입력 모드 활성화
+        function enableDirectInput() {
+            const counterValue = document.querySelector('.counter-value');
+            const counterInput = document.getElementById('participantInput');
+            
+            counterValue.style.display = 'none';
+            counterInput.style.display = 'block';
+            counterInput.focus();
+            counterInput.select();
+        }
+        
+        // 직접 입력 완료
+        function finishDirectInput() {
+            const counterValue = document.querySelector('.counter-value');
+            const counterInput = document.getElementById('participantInput');
+            let value = parseInt(counterInput.value);
+            
+            // 유효성 검사
+            if (isNaN(value) || value < 2) {
+                value = 2;
+            } else if (value > 200) {
+                value = 200;
+            }
+            
+            participantCount = value;
+            updateCounter();
+            
+            counterInput.style.display = 'none';
+            counterValue.style.display = 'block';
+        }
+        
+        // Enter 키 처리
+        function handleInputKeypress(event) {
+            if (event.key === 'Enter') {
+                event.target.blur();
+            }
+        }
+        
+        // 공개 범위 선택
+        function selectVisibility(type) {
+            selectedVisibility = type;
+            const options = document.querySelectorAll('.visibility-option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+        }
+        
+        // 조 편성 방식 선택
+        function selectTeamMethod(method) {
+            selectedTeamMethod = method;
+            // 현재 클릭된 요소의 부모 컨테이너에서 모든 visibility-option 찾기
+            const container = event.currentTarget.parentElement;
+            const options = container.querySelectorAll('.visibility-option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+        }
+        
+        // 골프장 선택
+        function selectCourse(courseId) {
+            selectedCourseName = courseId;
+            const cards = document.querySelectorAll('.course-card');
+            cards.forEach(card => card.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+        }
+        
+        // 골프장 검색
+        function searchCourse() {
+            alert('골프장 검색 화면으로 이동합니다.\n\n전국 200개 이상의 골프장을 검색할 수 있습니다.');
+        }
+        
+        // 임시저장
+        function saveDraft() {
+            alert('임시저장되었습니다!\n\n나중에 이어서 작성할 수 있습니다.');
+        }
+        
+        // 라운딩 만들기
+        function createRound() {
+            const date = document.getElementById('roundDate').value;
+            const time = document.getElementById('roundTime').value;
+            
+            if (!date || !time) {
+                alert('날짜와 시간을 입력해주세요.');
+                return;
+            }
+            
+            const visibilityText = {
+                'club': '동문회 멤버만',
+                'public': '전체 공개',
+                'private': '비공개'
+            };
+            
+            const teamMethodText = {
+                'random': '자동 랜덤 배정',
+                'manual': '호스트가 수동 배정',
+                'free': '참가자 자유 선택'
+            };
+            
+            alert(`라운딩이 생성되었습니다! 🎉\n\n📅 일정: ${date} ${time}\n⛳ 장소: 레이크사이드 골프클럽\n👥 인원: ${participantCount}명\n🎯 조 편성: ${teamMethodText[selectedTeamMethod]}\n🌍 공개범위: ${visibilityText[selectedVisibility]}\n\n홈 화면으로 돌아갑니다.`);
+            
+            // 홈으로 돌아가기
+            document.getElementById('homePage').classList.remove('hidden');
+            document.getElementById('createPage').style.transform = 'translateX(100%)';
+        }
+        
+        // 기타 함수들
+        function acceptInvite() {
+            alert('초대를 수락했습니다!\n\n파인밸리 골프클럽 라운딩에 참가합니다.');
+        }
+        
+        function declineInvite() {
+            if (confirm('초대를 거절하시겠습니까?')) {
+                alert('초대가 거절되었습니다.');
+            }
+        }
+        
+        // 초기 상태 설정
+        updateCounter();
+        
+        let currentHole = 4;
+        let currentPar = 4;
+        let holeScores = [4, 3, 5, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null];
+        let currentInputMode = 'relative';
+        let autoAdvanceEnabled = true;
+        let currentPlayer = '김민수';
+        
+        // 라운딩 정보 토글
+        function toggleRoundInfo() {
+            const expanded = document.getElementById('roundInfoExpanded');
+            if (expanded.style.display === 'none') {
+                expanded.style.display = 'block';
+            } else {
+                expanded.style.display = 'none';
+            }
+        }
+        
+        // 통계 토글
+        function toggleStats() {
+            const content = document.getElementById('statsContent');
+            const icon = document.getElementById('statsToggleIcon');
+            
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                icon.textContent = '▲';
+            } else {
+                content.style.display = 'none';
+                icon.textContent = '▼';
+            }
+        }
+        
+        // 숫자 키패드로 전환
+        function switchToNumberPad() {
+            document.getElementById('relativeScoreInput').style.display = 'none';
+            document.getElementById('numberPadInput').style.display = 'block';
+        }
+        
+        // 타일 입력으로 전환
+        function switchToTileInput() {
+            document.getElementById('relativeScoreInput').style.display = 'block';
+            document.getElementById('numberPadInput').style.display = 'none';
+        }
+        
+        // 홀로 점프
+        function jumpToHole(hole) {
+            currentHole = hole;
+            updateHoleDisplay();
+        }
+        
+        // 홀 디스플레이 업데이트
+        function updateHoleDisplay() {
+            // 홀 점 업데이트
+            const dots = document.querySelectorAll('.hole-dot');
+            dots.forEach((dot, index) => {
+                dot.classList.remove('active', 'completed');
+                if (index + 1 < currentHole && holeScores[index] !== null) {
+                    dot.classList.add('completed');
+                } else if (index + 1 === currentHole) {
+                    dot.classList.add('active');
+                }
+            });
+            
+            // 상태 라벨 업데이트
+            const statusLabel = document.getElementById('scoreStatusLabel');
+            const nextBtn = document.getElementById('nextHoleBtn');
+            const hint = document.getElementById('nextBtnHint');
+            
+            if (holeScores[currentHole - 1] !== null) {
+                statusLabel.textContent = `입력됨: ${holeScores[currentHole - 1]}타`;
+                statusLabel.style.color = '#16A34A';
+                nextBtn.disabled = false;
+                hint.style.display = 'none';
+            } else {
+                statusLabel.textContent = '점수를 선택하면 자동 저장돼요';
+                statusLabel.style.color = '#6B7280';
+                nextBtn.disabled = true;
+                hint.style.display = 'block';
+            }
+        }
+        
+        // 토스트 표시
+        function showToast(message) {
+            const toast = document.getElementById('saveToast');
+            toast.textContent = '✓ ' + message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+        
+        // 라운딩 상세 페이지로 이동
+        function showRoundDetail() {
+            document.getElementById('homePage').classList.add('hidden');
+            document.getElementById('detailPage').classList.remove('hidden');
+            document.getElementById('detailPage').style.transform = 'translateX(0)';
+        }
+        
+        // 상세 페이지에서 홈으로 돌아가기
+        function goBackFromDetail() {
+            document.getElementById('homePage').classList.remove('hidden');
+            document.getElementById('detailPage').classList.add('hidden');
+            document.getElementById('detailPage').style.transform = 'translateX(100%)';
+        }
+        
+        // 스코어카드 시작
+        function startScorecard() {
+            document.getElementById('detailPage').classList.add('hidden');
+            document.getElementById('scorecardPage').style.transform = 'translateX(0)';
+        }
+        
+        // 스코어카드에서 돌아가기
+        function goBackFromScorecard() {
+            if (confirm('스코어 입력을 중단하시겠습니까?\n입력한 내용은 자동 저장됩니다.')) {
+                const scorecardPage = document.getElementById('scorecardPage');
+                const stadiumPage = document.getElementById('stadiumPage');
+                
+                stadiumPage.classList.remove('hidden');
+                stadiumPage.style.transform = 'translateX(0)';
+                scorecardPage.style.transform = 'translateX(100%)';
+                
+                // 0.3초 후 완전히 숨김
+                setTimeout(() => {
+                    scorecardPage.classList.add('hidden');
+                }, 300);
+            }
+        }
+        
+        // 전체 스코어카드 보기
+        function viewFullScorecard() {
+            document.getElementById('scorecardPage').classList.add('hidden');
+            document.getElementById('fullScorecardPage').classList.remove('hidden');
+            document.getElementById('fullScorecardPage').style.transform = 'translateX(0)';
+        }
+        
+        // 전체 스코어카드에서 스코어 입력으로 돌아가기
+        function goBackToScoreInput() {
+            document.getElementById('scorecardPage').classList.remove('hidden');
+            document.getElementById('fullScorecardPage').classList.add('hidden');
+            document.getElementById('fullScorecardPage').style.transform = 'translateX(100%)';
+        }
+        
+        // 전체 스코어카드에서 특정 홀 수정
+        function editHoleScore(hole) {
+            currentHole = hole;
+            goBackToScoreInput();
+            updateHoleDisplay();
+        }
+        
+        // 플레이어 선택
+        function selectPlayer(playerId) {
+            const chips = document.querySelectorAll('.player-chip');
+            chips.forEach(chip => chip.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            const playerNames = ['김민수', '박영희', '이철수', '최지원'];
+            currentPlayer = playerNames[playerId - 1];
+        }
+        
+        // 홀 타수 입력
+        function inputHoleScore(score) {
+            holeScores[currentHole - 1] = score;
+            
+            // 모든 타일에서 selected 클래스 제거
+            document.querySelectorAll('.score-tile').forEach(tile => {
+                tile.classList.remove('selected');
+            });
+            
+            // 클릭된 타일에 selected 클래스 추가
+            event.currentTarget.classList.add('selected');
+            
+            // 상태 라벨 업데이트
+            const statusLabel = document.getElementById('scoreStatusLabel');
+            statusLabel.textContent = `입력됨: ${score}타`;
+            statusLabel.style.color = '#16A34A';
+            
+            // 다음 버튼 활성화
+            const nextBtn = document.getElementById('nextHoleBtn');
+            const hint = document.getElementById('nextBtnHint');
+            nextBtn.disabled = false;
+            hint.style.display = 'none';
+            
+            // 스코어 이름 매핑
+            const scoreNames = {
+                2: 'Eagle',
+                3: 'Birdie',
+                4: 'Par',
+                5: 'Bogey',
+                6: 'Double Bogey',
+                7: 'Triple+'
+            };
+            
+            // 토스트 표시
+            showToast(`${currentHole}번 홀 ${currentPlayer} ${scoreNames[score] || score + '타'} 저장됨`);
+            
+            // 자동 다음 홀 (0.8초 후)
+            if (autoAdvanceEnabled && currentHole < 18) {
+                setTimeout(() => {
+                    // selected 클래스 제거하고 다음 홀로
+                    document.querySelectorAll('.score-tile').forEach(tile => {
+                        tile.classList.remove('selected');
+                    });
+                    nextHole();
+                }, 800);
+            }
+        }
+        
+        // 되돌리기
+        function undoScore() {
+            if (holeScores[currentHole - 1] !== null) {
+                holeScores[currentHole - 1] = null;
+                updateHoleDisplay();
+                showToast('입력을 취소했습니다');
+            } else {
+                showToast('되돌릴 입력이 없습니다');
+            }
+        }
+        
+        // 이전 홀
+        function previousHole() {
+            if (currentHole > 1) {
+                currentHole--;
+                updateHoleDisplay();
+            } else {
+                showToast('첫 번째 홀입니다');
+            }
+        }
+        
+        // 다음 홀
+        function nextHole() {
+            if (currentHole < 18) {
+                currentHole++;
+                updateHoleDisplay();
+            } else {
+                if (confirm('마지막 홀입니다. 라운딩을 완료하시겠습니까?')) {
+                    showToast('라운딩이 완료되었습니다! 🎉');
+                    setTimeout(() => {
+                        goBackFromScorecard();
+                    }, 1500);
+                }
+            }
+        }
+        
+        // 스코어카드 메뉴
+        function showScorecardMenu() {
+            alert('스코어카드 메뉴\n\n• 통계 보기\n• 공유하기\n• 인쇄하기');
+        }
+        
+        // 상세 페이지 기능들
+        function showOptions() {
+            alert('더보기 메뉴\n\n• 수정하기\n• 취소하기\n• 신고하기');
+        }
+        
+        function openMap() {
+            alert('지도 앱으로 연결됩니다.\n\n레이크사이드 골프클럽\n경기도 가평군 북면 이곡리 234');
+        }
+        
+        function copyAddress() {
+            alert('주소가 복사되었습니다!\n\n경기도 가평군 북면 이곡리 234');
+        }
+        
+        function shareRound() {
+            alert('공유하기\n\n• 카카오톡으로 공유\n• 링크 복사\n• 더보기');
+        }
+        
+        function openChat() {
+            alert('라운딩 채팅방으로 입장합니다.\n\n참가자들과 실시간으로 소통할 수 있습니다.');
+        }
+        
+        // 경기장 모드 입장
+        function enterStadium() {
+            document.getElementById('detailPage').classList.add('hidden');
+            document.getElementById('stadiumPage').classList.remove('hidden');
+            document.getElementById('stadiumPage').style.transform = 'translateX(0)';
+        }
+        
+        // 경기장 모드에서 스코어 입력 시작
+        function startScoreFromStadium() {
+            console.log('✅ 스코어 입력하기 버튼 클릭됨');
+            
+            // 모든 페이지 숨기기
+            const allPages = ['homePage', 'createPage', 'detailPage', 'stadiumPage', 'fullScorecardPage'];
+            allPages.forEach(pageId => {
+                const page = document.getElementById(pageId);
+                if (page) {
+                    page.classList.add('hidden');
+                    page.style.transform = 'translateX(-100%)';
+                    console.log(`${pageId} 숨김 처리`);
+                }
+            });
+            
+            // scorecardPage만 완전히 표시
+            const scorecardPage = document.getElementById('scorecardPage');
+            console.log('scorecardPage 표시 시작:', scorecardPage);
+            scorecardPage.classList.remove('hidden');
+            scorecardPage.style.display = 'flex';
+            scorecardPage.style.flexDirection = 'column';
+            scorecardPage.style.transform = 'translateX(0)';
+            scorecardPage.style.zIndex = '10';
+            
+            console.log('✅ 스코어 입력 페이지 전환 완료');
+        }
+        
+        // 경기장 모드 퇴장
+        function exitStadium() {
+            if (confirm('경기장 모드를 종료하시겠습니까?')) {
+                document.getElementById('detailPage').classList.remove('hidden');
+                document.getElementById('stadiumPage').style.transform = 'translateX(100%)';
+            }
+        }
+    </script>
+</body>
+</html>
