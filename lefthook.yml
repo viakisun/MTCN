@@ -3,20 +3,17 @@ pre-commit:
   commands:
     # 1. Dart 포맷팅 자동 수정
     format:
-      root: "mtcn_flutter/"
       glob: "*.{dart}"
       run: dart format {staged_files} && git add {staged_files}
       stage_fixed: true
     
     # 2. Flutter 정적 분석
     analyze:
-      root: "mtcn_flutter/"
       run: flutter analyze
       fail_text: "Flutter analyze에서 오류를 발견했습니다. 수정 후 다시 커밋하세요."
     
     # 3. Flutter 테스트 실행
     test:
-      root: "mtcn_flutter/"
       run: flutter test
       fail_text: "테스트가 실패했습니다. 테스트를 수정 후 다시 커밋하세요."
 

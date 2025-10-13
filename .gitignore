@@ -1,5 +1,105 @@
-node_modules
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/coverage/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# Platform-specific build artifacts
+**/ios/Flutter/ephemeral/
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/ServiceDefinitions.json
+**/ios/Runner/GeneratedPluginRegistrant.*
+
+# Web build artifacts
+/web/flutter_service_worker.js
+
+# macOS build artifacts
+**/macos/Flutter/ephemeral/
+**/macos/Flutter/Flutter-Debug.xcconfig
+**/macos/Flutter/Flutter-Release.xcconfig
+**/macos/Flutter/Flutter-Profile.xcconfig
+**/macos/Flutter/GeneratedPluginRegistrant.swift
+
+# Linux build artifacts
+**/linux/flutter/ephemeral/
+
+# Windows build artifacts
+**/windows/flutter/ephemeral/
+
+# Backend related
+backend/venv/
+backend/__pycache__/
+backend/*.pyc
+backend/.env
+backend/logs/
+backend/*.log
 
 # Lefthook
 lefthook-local.yml
 .lefthook/
+
+# IDE and Editor files
+.vscode/
+*.code-workspace
+
+# OS generated files
+Thumbs.db
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Package manager lock files (keep pubspec.lock for Flutter)
+# package-lock.json (removed - not needed for Flutter)
+# yarn.lock (removed - not needed for Flutter)
