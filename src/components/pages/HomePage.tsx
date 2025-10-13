@@ -6,6 +6,7 @@ import { designTokens } from '@/styles/design-tokens';
 import { Card, Badge, Avatar, Button } from '@/components/ui';
 import { RoundingCard, RoundingCardData } from '@/components/ui/RoundingCard';
 import { getIconComponent } from '@/components/icons/GolfIcons';
+import { dateUtils } from '@/utils';
 
 const HomePage: React.FC = () => {
   const { setActiveTab } = useAppStore();
@@ -35,15 +36,7 @@ const HomePage: React.FC = () => {
     );
   }
 
-  const calculateDDay = (dateString: string) => {
-    const today = new Date();
-    const targetDate = new Date(dateString);
-    const diffTime = targetDate.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
-  };
-
-  const dDay = calculateDDay(upcomingRounding.date);
+  const dDay = dateUtils.calculateDDay(upcomingRounding.date);
 
   return (
     <div 

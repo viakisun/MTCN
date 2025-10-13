@@ -14,6 +14,11 @@ export { ScoreFilter } from './ScoreFilter'; // Score filter component
 export { ProfileStatCard } from './ProfileStatCard'; // Profile stat card component
 export { ProfileMenuItem } from './ProfileMenuItem'; // Profile menu item component
 export { default as ActivityItem } from './ActivityItem';
+export { CreateActionCard } from './CreateActionCard'; // Reusable create action card
+
+// Layout components
+export { PageContainer } from '../layout/PageContainer';
+export { PageHeader } from '../layout/PageHeader';
 
 // 타입들도 함께 export
 export type { AvatarProps, BadgeProps, ButtonProps, CardProps } from '@/types';

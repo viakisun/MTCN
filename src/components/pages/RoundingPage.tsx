@@ -5,6 +5,7 @@ import { useMockData, useRoundingData } from '@/hooks';
 import { RoundingCard, EmptyState, RoundingFilter } from '@/components/ui';
 import { designTokens } from '@/styles/design-tokens';
 import { getIconComponent } from '@/components/icons/GolfIcons';
+import { dateUtils } from '@/utils';
 import type { FilterOption } from '@/components/ui/RoundingFilter';
 import RoundingDetailPage from './RoundingDetailPage';
 
@@ -24,15 +25,6 @@ const RoundingPage: React.FC = () => {
   // 상세 페이지 상태
   const [showDetail, setShowDetail] = useState(false);
   const [selectedRoundingId, setSelectedRoundingId] = useState<string | null>(null);
-
-  // D-Day 계산 함수
-  const calculateDDay = (dateString: string) => {
-    const today = new Date();
-    const targetDate = new Date(dateString);
-    const diffTime = targetDate.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
-  };
 
   // 필터 옵션 생성
   const filterOptions: FilterOption[] = useMemo(() => {
@@ -191,20 +183,7 @@ const RoundingPage: React.FC = () => {
         style={{ marginBottom: designTokens.spacing.lg }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: designTokens.spacing.sm, marginBottom: designTokens.spacing.sm }}>
-          <div style={{
-            width: '24px',
-            height: '24px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            background: `linear-gradient(135deg, ${designTokens.colors.primary[500]} 0%, ${designTokens.colors.primary[600]} 100%)`,
-            borderRadius: '6px',
-            color: 'white',
-            fontSize: '14px',
-            fontWeight: 'bold'
-          }}>
-            📅
-          </div>
+          {getIconComponent('calendar', { size: 24, color: designTokens.colors.primary[600] })}
           <h1 style={{
             fontSize: designTokens.typography.fontSize.xl,
             fontWeight: designTokens.typography.fontWeight.semibold,
@@ -246,7 +225,7 @@ const RoundingPage: React.FC = () => {
         }}
       >
         {filteredRoundings.map((rounding) => {
-          const dDay = calculateDDay(rounding.date);
+          const dDay = dateUtils.calculateDDay(rounding.date);
           return (
             <RoundingCard
               key={rounding.id}
@@ -262,7 +241,7 @@ const RoundingPage: React.FC = () => {
                 temperature: rounding.temperature,
                 greenFee: rounding.greenFee,
                 holes: rounding.holes,
-                dDay: dDay, // D-Day 추가
+                dDay: dDay,
                 notice: rounding.notice
               }}
               onClick={() => handleRoundingClick(rounding.id)}
