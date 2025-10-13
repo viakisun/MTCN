@@ -87,7 +87,6 @@ class StatusBadge extends StatelessWidget {
           vertical: DesignTokens.spacing2,
         );
       case BadgeSize.medium:
-      default:
         return const EdgeInsets.symmetric(
           horizontal: DesignTokens.spacing3,
           vertical: DesignTokens.spacing1,
@@ -102,7 +101,6 @@ class StatusBadge extends StatelessWidget {
       case BadgeSize.large:
         return DesignTokens.fontBase;
       case BadgeSize.medium:
-      default:
         return DesignTokens.fontSm;
     }
   }
@@ -114,7 +112,6 @@ class StatusBadge extends StatelessWidget {
       case BadgeSize.large:
         return 18;
       case BadgeSize.medium:
-      default:
         return 14;
     }
   }
@@ -126,7 +123,6 @@ class StatusBadge extends StatelessWidget {
       case BadgeSize.large:
         return 10;
       case BadgeSize.medium:
-      default:
         return 8;
     }
   }
@@ -148,7 +144,6 @@ class StatusBadge extends StatelessWidget {
       case BadgeStyle.live:
         return DesignTokens.primary100;
       case BadgeStyle.neutral:
-      default:
         return DesignTokens.neutral100;
     }
   }
@@ -166,7 +161,6 @@ class StatusBadge extends StatelessWidget {
       case BadgeStyle.live:
         return DesignTokens.primary600;
       case BadgeStyle.neutral:
-      default:
         return DesignTokens.neutral400;
     }
   }
@@ -188,7 +182,6 @@ class StatusBadge extends StatelessWidget {
       case BadgeStyle.live:
         return DesignTokens.primary700;
       case BadgeStyle.neutral:
-      default:
         return DesignTokens.neutral700;
     }
   }

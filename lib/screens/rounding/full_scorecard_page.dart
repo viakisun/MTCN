@@ -272,7 +272,7 @@ class _FullScorecardPageState extends ConsumerState<FullScorecardPage> {
                                 end: Alignment.bottomRight,
                                 colors: [
                                   player.avatarColor,
-                                  player.avatarColor.withOpacity(0.7),
+                                  player.avatarColor.withValues(alpha: 0.7),
                                 ],
                               ),
                               shape: BoxShape.circle,
@@ -369,7 +369,7 @@ class _FullScorecardPageState extends ConsumerState<FullScorecardPage> {
                             Container(
                               width: 1,
                               height: 30,
-                              color: Colors.white.withOpacity(0.3),
+                              color: Colors.white.withValues(alpha: 0.3),
                             ),
                             _buildTotalStat(
                               'IN',
@@ -378,7 +378,7 @@ class _FullScorecardPageState extends ConsumerState<FullScorecardPage> {
                             Container(
                               width: 1,
                               height: 30,
-                              color: Colors.white.withOpacity(0.3),
+                              color: Colors.white.withValues(alpha: 0.3),
                             ),
                             _buildTotalStat(
                               'TOTAL',

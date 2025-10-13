@@ -17,7 +17,7 @@ class ScoreTrendChart extends StatelessWidget {
     if (scores.isEmpty) return [];
 
     final now = DateTime.now();
-    DateTime cutoffDate;
+    DateTime cutoffDate = DateTime.now();
 
     switch (timeRange) {
       case 'week':
@@ -30,8 +30,8 @@ class ScoreTrendChart extends StatelessWidget {
         cutoffDate = now.subtract(const Duration(days: 365));
         break;
       case 'all':
-      default:
-        return scores;
+        cutoffDate = DateTime(1900); // Very old date to include all
+        break;
     }
 
     return scores.where((score) {
@@ -152,7 +152,7 @@ class ScoreTrendChart extends StatelessWidget {
               isCurved: true,
               gradient: LinearGradient(
                 colors: [
-                  DesignTokens.primary600.withOpacity(0.8),
+                  DesignTokens.primary600.withValues(alpha: 0.8),
                   DesignTokens.primary400,
                 ],
               ),
@@ -176,8 +176,8 @@ class ScoreTrendChart extends StatelessWidget {
                 show: true,
                 gradient: LinearGradient(
                   colors: [
-                    DesignTokens.primary600.withOpacity(0.15),
-                    DesignTokens.primary400.withOpacity(0.05),
+                    DesignTokens.primary600.withValues(alpha: 0.15),
+                    DesignTokens.primary400.withValues(alpha: 0.05),
                   ],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
@@ -190,7 +190,7 @@ class ScoreTrendChart extends StatelessWidget {
                 return FlSpot(entry.key.toDouble(), entry.value.par.toDouble());
               }).toList(),
               isCurved: false,
-              color: DesignTokens.textTertiary.withOpacity(0.3),
+              color: DesignTokens.textTertiary.withValues(alpha: 0.3),
               barWidth: 2,
               isStrokeCapRound: true,
               dotData: const FlDotData(show: false),
@@ -201,7 +201,7 @@ class ScoreTrendChart extends StatelessWidget {
             enabled: true,
             touchTooltipData: LineTouchTooltipData(
               getTooltipColor: (touchedSpot) =>
-                  DesignTokens.neutral800.withOpacity(0.9),
+                  DesignTokens.neutral800.withValues(alpha: 0.9),
               tooltipRoundedRadius: DesignTokens.radiusMd,
               tooltipPadding: const EdgeInsets.all(DesignTokens.spacing2),
               getTooltipItems: (List<LineBarSpot> touchedSpots) {
@@ -245,7 +245,7 @@ class ScoreTrendChart extends StatelessWidget {
                   return spotIndexes.map((spotIndex) {
                     return TouchedSpotIndicatorData(
                       FlLine(
-                        color: DesignTokens.primary600.withOpacity(0.5),
+                        color: DesignTokens.primary600.withValues(alpha: 0.5),
                         strokeWidth: 2,
                         dashArray: [5, 5],
                       ),

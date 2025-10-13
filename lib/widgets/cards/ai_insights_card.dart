@@ -67,7 +67,7 @@ class AIInsightsCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(DesignTokens.radiusXl),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF667eea).withOpacity(0.3),
+            color: const Color(0xFF667eea).withValues(alpha: 0.3),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),
@@ -83,7 +83,7 @@ class AIInsightsCard extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(DesignTokens.radiusMd),
                 ),
                 child: const Icon(
@@ -121,7 +121,7 @@ class AIInsightsCard extends StatelessWidget {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(DesignTokens.radiusFull),
                 ),
                 child: const Row(
@@ -148,7 +148,7 @@ class AIInsightsCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(DesignTokens.spacing3),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
+              color: Colors.white.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(DesignTokens.radiusLg),
             ),
             child: Text(
@@ -186,9 +186,9 @@ class AIInsightsCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(DesignTokens.spacing3),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(DesignTokens.radiusMd),
-              border: Border.all(color: Colors.white.withOpacity(0.3)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
             ),
             child: Row(
               children: [
@@ -216,13 +216,13 @@ class AIInsightsCard extends StatelessWidget {
               Container(
                 width: 1,
                 height: 30,
-                color: Colors.white.withOpacity(0.3),
+                color: Colors.white.withValues(alpha: 0.3),
               ),
               _buildMiniStat('평균', averageScore.toString(), Icons.show_chart),
               Container(
                 width: 1,
                 height: 30,
-                color: Colors.white.withOpacity(0.3),
+                color: Colors.white.withValues(alpha: 0.3),
               ),
               _buildMiniStat('베스트', bestScore.toString(), Icons.star),
             ],

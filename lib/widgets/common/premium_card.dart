@@ -67,8 +67,8 @@ class PremiumCard extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: DesignTokens.gradientGlassmorphism,
               border: Border.all(
-                color: DesignTokens.neutral0.withOpacity(
-                  DesignTokens.opacity20,
+                color: DesignTokens.neutral0.withValues(
+                  alpha: DesignTokens.opacity20,
                 ),
                 width: 1.5,
               ),
@@ -103,7 +103,6 @@ class PremiumCard extends StatelessWidget {
         );
 
       case PremiumCardStyle.elevated:
-      default:
         return Container(
           padding: effectivePadding,
           decoration: BoxDecoration(

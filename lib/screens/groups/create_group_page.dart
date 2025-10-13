@@ -498,7 +498,7 @@ class _CreateGroupPageState extends ConsumerState<CreateGroupPage> {
               height: 48,
               decoration: BoxDecoration(
                 color: isSelected
-                    ? DesignTokens.primary600.withOpacity(0.1)
+                    ? DesignTokens.primary600.withValues(alpha: 0.1)
                     : DesignTokens.neutral50,
                 borderRadius: BorderRadius.circular(DesignTokens.radiusLg),
               ),
@@ -536,9 +536,12 @@ class _CreateGroupPageState extends ConsumerState<CreateGroupPage> {
                 ],
               ),
             ),
+            // ignore: deprecated_member_use
             Radio<String>(
               value: value,
+              // ignore: deprecated_member_use
               groupValue: _privacy,
+              // ignore: deprecated_member_use
               onChanged: (String? newValue) {
                 if (newValue != null) {
                   setState(() {
@@ -597,7 +600,7 @@ class _CreateGroupPageState extends ConsumerState<CreateGroupPage> {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: DesignTokens.primary600,
+            activeThumbColor: DesignTokens.primary600,
           ),
         ],
       ),

@@ -139,7 +139,9 @@ class GroupCard extends StatelessWidget {
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFFFFD700).withOpacity(0.4),
+                              color: const Color(
+                                0xFFFFD700,
+                              ).withValues(alpha: 0.4),
                               blurRadius: 8,
                               spreadRadius: 1,
                             ),

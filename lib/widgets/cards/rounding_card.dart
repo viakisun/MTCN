@@ -3,7 +3,6 @@ import '../../core/theme/design_tokens.dart';
 import '../../models/rounding.dart';
 import '../../screens/rounding/rounding_detail_page.dart';
 import '../common/avatar.dart';
-import '../common/badge.dart';
 
 class RoundingCard extends StatelessWidget {
   final Rounding rounding;

@@ -108,7 +108,7 @@ class RoundReportPage extends ConsumerWidget {
                     rounding.courseName,
                     style: TextStyle(
                       fontSize: DesignTokens.fontLg,
-                      color: DesignTokens.neutral0.withOpacity(0.9),
+                      color: DesignTokens.neutral0.withValues(alpha: 0.9),
                     ),
                   ),
                   const SizedBox(height: DesignTokens.spacing1),
@@ -116,7 +116,7 @@ class RoundReportPage extends ConsumerWidget {
                     _formatDate(rounding.date),
                     style: TextStyle(
                       fontSize: DesignTokens.fontSm,
-                      color: DesignTokens.neutral0.withOpacity(0.8),
+                      color: DesignTokens.neutral0.withValues(alpha: 0.8),
                     ),
                   ),
                 ],
@@ -147,7 +147,7 @@ class RoundReportPage extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(DesignTokens.radiusXl),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFFFFD700).withOpacity(0.3),
+                        color: const Color(0xFFFFD700).withValues(alpha: 0.3),
                         blurRadius: 15,
                         offset: const Offset(0, 4),
                       ),
@@ -451,7 +451,11 @@ MTCN Golf App으로 기록된 결과입니다.
       ),
       child: Column(
         children: [
-          Icon(icon, color: DesignTokens.neutral0.withOpacity(0.8), size: 32),
+          Icon(
+            icon,
+            color: DesignTokens.neutral0.withValues(alpha: 0.8),
+            size: 32,
+          ),
           const SizedBox(height: DesignTokens.spacing2),
           Text(
             value,
@@ -466,7 +470,7 @@ MTCN Golf App으로 기록된 결과입니다.
             label,
             style: TextStyle(
               fontSize: DesignTokens.fontXs,
-              color: DesignTokens.neutral0.withOpacity(0.8),
+              color: DesignTokens.neutral0.withValues(alpha: 0.8),
             ),
           ),
         ],
@@ -489,7 +493,7 @@ MTCN Golf App으로 기록된 결과입니다.
         boxShadow: isWinner
             ? [
                 BoxShadow(
-                  color: const Color(0xFFFFD700).withOpacity(0.2),
+                  color: const Color(0xFFFFD700).withValues(alpha: 0.2),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),

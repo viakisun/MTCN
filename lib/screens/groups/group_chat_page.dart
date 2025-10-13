@@ -295,7 +295,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
                             '레이크사이드 골프클럽 · 10월 15일',
                             style: TextStyle(
                               fontSize: DesignTokens.fontXs,
-                              color: DesignTokens.info.withOpacity(0.8),
+                              color: DesignTokens.info.withValues(alpha: 0.8),
                             ),
                           ),
                         ],
@@ -479,7 +479,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
                   _isMenuOpen = false;
                 });
               },
-              child: Container(color: Colors.black.withOpacity(0.5)),
+              child: Container(color: Colors.black.withValues(alpha: 0.5)),
             ),
           if (_isMenuOpen)
             Positioned(
@@ -622,7 +622,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
                               ),
                               decoration: BoxDecoration(
                                 color: isMe
-                                    ? Colors.white.withOpacity(0.2)
+                                    ? Colors.white.withValues(alpha: 0.2)
                                     : DesignTokens.neutral50,
                                 borderRadius: BorderRadius.circular(
                                   DesignTokens.radiusMd,
@@ -654,8 +654,8 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
                                     style: TextStyle(
                                       fontSize: DesignTokens.fontXs,
                                       color: isMe
-                                          ? DesignTokens.neutral0.withOpacity(
-                                              0.8,
+                                          ? DesignTokens.neutral0.withValues(
+                                              alpha: 0.8,
                                             )
                                           : DesignTokens.textSecondary,
                                     ),
@@ -706,7 +706,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
                                   ),
                                   decoration: BoxDecoration(
                                     color: isMe
-                                        ? Colors.white.withOpacity(0.2)
+                                        ? Colors.white.withValues(alpha: 0.2)
                                         : DesignTokens.neutral50,
                                     borderRadius: BorderRadius.circular(
                                       DesignTokens.radiusMd,
@@ -735,7 +735,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
                                   ),
                                 );
                               }
-                            }).toList(),
+                            }),
                           ],
 
                           // Message content
@@ -820,7 +820,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
                         ),
                       ),
                     );
-                  }).toList(),
+                  }),
 
                 // Add reaction button
                 InkWell(

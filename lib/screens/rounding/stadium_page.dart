@@ -150,7 +150,7 @@ class _StadiumPageState extends ConsumerState<StadiumPage>
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
+                    color: Colors.black.withValues(alpha: 0.3),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -183,8 +183,9 @@ class _StadiumPageState extends ConsumerState<StadiumPage>
                                         boxShadow: [
                                           BoxShadow(
                                             color: DesignTokens.error
-                                                .withOpacity(
-                                                  0.5 +
+                                                .withValues(
+                                                  alpha:
+                                                      0.5 +
                                                       (_pulseController.value *
                                                           0.5),
                                                 ),
@@ -222,7 +223,7 @@ class _StadiumPageState extends ConsumerState<StadiumPage>
                               widget.rounding.courseName,
                               style: TextStyle(
                                 fontSize: DesignTokens.fontSm,
-                                color: Colors.white.withOpacity(0.7),
+                                color: Colors.white.withValues(alpha: 0.7),
                               ),
                             ),
                           ],
@@ -270,8 +271,8 @@ class _StadiumPageState extends ConsumerState<StadiumPage>
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  const Color(0xFFFFD700).withOpacity(0.2),
-                  const Color(0xFFFFA500).withOpacity(0.1),
+                  const Color(0xFFFFD700).withValues(alpha: 0.2),
+                  const Color(0xFFFFA500).withValues(alpha: 0.1),
                 ],
               )
             : null,
@@ -283,8 +284,8 @@ class _StadiumPageState extends ConsumerState<StadiumPage>
         boxShadow: [
           BoxShadow(
             color: isLeader
-                ? const Color(0xFFFFD700).withOpacity(0.3)
-                : Colors.black.withOpacity(0.2),
+                ? const Color(0xFFFFD700).withValues(alpha: 0.3)
+                : Colors.black.withValues(alpha: 0.2),
             blurRadius: isLeader ? 15 : 8,
             offset: const Offset(0, 4),
           ),
@@ -357,7 +358,7 @@ class _StadiumPageState extends ConsumerState<StadiumPage>
                   'Hole ${entry.currentHole}/18',
                   style: TextStyle(
                     fontSize: DesignTokens.fontSm,
-                    color: Colors.white.withOpacity(0.6),
+                    color: Colors.white.withValues(alpha: 0.6),
                   ),
                 ),
               ],
@@ -383,7 +384,7 @@ class _StadiumPageState extends ConsumerState<StadiumPage>
                 '${entry.score} strokes',
                 style: TextStyle(
                   fontSize: DesignTokens.fontXs,
-                  color: Colors.white.withOpacity(0.5),
+                  color: Colors.white.withValues(alpha: 0.5),
                 ),
               ),
             ],

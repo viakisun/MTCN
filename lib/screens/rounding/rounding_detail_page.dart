@@ -315,7 +315,7 @@ class RoundingDetailPage extends ConsumerWidget {
                                 ],
                               ),
                             );
-                          }).toList(),
+                          }),
                         ],
                       ),
                     )

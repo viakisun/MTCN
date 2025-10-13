@@ -4,7 +4,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/theme/design_tokens.dart';
 import '../../providers/filter_provider.dart';
 import '../../widgets/cards/score_card.dart';
-import 'full_scorecard_page.dart';
 import 'score_entry_page.dart';
 import 'score_trends_page.dart';
 

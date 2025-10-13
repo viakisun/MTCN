@@ -149,7 +149,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     backgroundColor: _items[_currentPage].color,
                     foregroundColor: DesignTokens.neutral0,
                     elevation: 2,
-                    shadowColor: _items[_currentPage].color.withOpacity(0.4),
+                    shadowColor: _items[_currentPage].color.withValues(
+                      alpha: 0.4,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(
                         DesignTokens.radiusXl,
@@ -189,12 +191,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [item.color, item.color.withOpacity(0.7)],
+                    colors: [item.color, item.color.withValues(alpha: 0.7)],
                   ),
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: item.color.withOpacity(0.3),
+                      color: item.color.withValues(alpha: 0.3),
                       blurRadius: 24,
                       offset: const Offset(0, 12),
                     ),

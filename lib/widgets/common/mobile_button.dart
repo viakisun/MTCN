@@ -44,7 +44,7 @@ class MobileButton extends StatelessWidget {
           disabledForegroundColor: DesignTokens.textDisabled,
           elevation: style == MobileButtonStyle.primary ? 2 : 0,
           shadowColor: style == MobileButtonStyle.primary
-              ? DesignTokens.primary600.withOpacity(0.3)
+              ? DesignTokens.primary600.withValues(alpha: 0.3)
               : Colors.transparent,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(_getBorderRadius()),

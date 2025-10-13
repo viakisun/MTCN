@@ -513,9 +513,9 @@ class _JoinRoundingPageState extends ConsumerState<JoinRoundingPage> {
         vertical: DesignTokens.spacing2,
       ),
       decoration: BoxDecoration(
-        color: DesignTokens.success.withOpacity(0.1),
+        color: DesignTokens.success.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(DesignTokens.radiusLg),
-        border: Border.all(color: DesignTokens.success.withOpacity(0.3)),
+        border: Border.all(color: DesignTokens.success.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

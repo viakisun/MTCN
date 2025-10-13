@@ -967,7 +967,7 @@ class _CreateRoundingPageState extends ConsumerState<CreateRoundingPage> {
         Switch(
           value: value,
           onChanged: onChanged,
-          activeColor: DesignTokens.primary600,
+          activeThumbColor: DesignTokens.primary600,
         ),
       ],
     );
@@ -1205,7 +1205,7 @@ class _CreateRoundingPageState extends ConsumerState<CreateRoundingPage> {
         Switch(
           value: value,
           onChanged: onChanged,
-          activeColor: DesignTokens.primary600,
+          activeThumbColor: DesignTokens.primary600,
         ),
       ],
     );

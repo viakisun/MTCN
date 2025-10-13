@@ -151,7 +151,7 @@ class _FullScorecardPageState extends ConsumerState<FullScorecardPage>
                 Container(
                   width: 1,
                   height: 40,
-                  color: Colors.white.withOpacity(0.3),
+                  color: Colors.white.withValues(alpha: 0.3),
                 ),
                 _buildSummaryItem(
                   'Par',
@@ -161,7 +161,7 @@ class _FullScorecardPageState extends ConsumerState<FullScorecardPage>
                 Container(
                   width: 1,
                   height: 40,
-                  color: Colors.white.withOpacity(0.3),
+                  color: Colors.white.withValues(alpha: 0.3),
                 ),
                 _buildSummaryItem(
                   '대비',
@@ -224,7 +224,7 @@ class _FullScorecardPageState extends ConsumerState<FullScorecardPage>
           label,
           style: TextStyle(
             fontSize: DesignTokens.fontXs,
-            color: color.withOpacity(0.8),
+            color: color.withValues(alpha: 0.8),
           ),
         ),
         const SizedBox(height: DesignTokens.spacing1),
@@ -302,7 +302,10 @@ class _FullScorecardPageState extends ConsumerState<FullScorecardPage>
         decoration: BoxDecoration(
           color: DesignTokens.neutral0,
           borderRadius: BorderRadius.circular(DesignTokens.radiusLg),
-          border: Border.all(color: scoreColor.withOpacity(0.3), width: 2),
+          border: Border.all(
+            color: scoreColor.withValues(alpha: 0.3),
+            width: 2,
+          ),
           boxShadow: DesignTokens.shadowSm,
         ),
         child: Column(

@@ -179,7 +179,7 @@ class _ScoreEntryPageState extends ConsumerState<ScoreEntryPage> {
                     Container(
                       width: 1,
                       height: 40,
-                      color: Colors.white.withOpacity(0.3),
+                      color: Colors.white.withValues(alpha: 0.3),
                     ),
                     _buildSummaryItem(
                       '총 타수',
@@ -189,7 +189,7 @@ class _ScoreEntryPageState extends ConsumerState<ScoreEntryPage> {
                     Container(
                       width: 1,
                       height: 40,
-                      color: Colors.white.withOpacity(0.3),
+                      color: Colors.white.withValues(alpha: 0.3),
                     ),
                     _buildSummaryItem(
                       '대비',
@@ -294,7 +294,7 @@ class _ScoreEntryPageState extends ConsumerState<ScoreEntryPage> {
           label,
           style: TextStyle(
             fontSize: DesignTokens.fontXs,
-            color: color.withOpacity(0.8),
+            color: color.withValues(alpha: 0.8),
           ),
         ),
         const SizedBox(height: DesignTokens.spacing1),

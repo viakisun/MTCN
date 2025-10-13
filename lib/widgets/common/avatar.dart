@@ -77,8 +77,10 @@ class Avatar extends StatelessWidget {
         return const Color(0xFFC0C0C0); // Silver
       case PlayerTier.intermediate:
         return const Color(0xFFCD7F32); // Bronze
-      default:
-        return DesignTokens.neutral0;
+      case PlayerTier.beginner:
+        return const Color(0xFF8B4513); // Brown
+      case null:
+        return DesignTokens.neutral300;
     }
   }
 
@@ -87,7 +89,7 @@ class Avatar extends StatelessWidget {
       case PlayerTier.pro:
         return [
           BoxShadow(
-            color: const Color(0xFFFFD700).withOpacity(0.5),
+            color: const Color(0xFFFFD700).withValues(alpha: 0.5),
             blurRadius: 12,
             spreadRadius: 2,
           ),
@@ -95,7 +97,7 @@ class Avatar extends StatelessWidget {
       case PlayerTier.expert:
         return [
           BoxShadow(
-            color: const Color(0xFFC0C0C0).withOpacity(0.4),
+            color: const Color(0xFFC0C0C0).withValues(alpha: 0.4),
             blurRadius: 8,
             spreadRadius: 1,
           ),
@@ -103,12 +105,14 @@ class Avatar extends StatelessWidget {
       case PlayerTier.intermediate:
         return [
           BoxShadow(
-            color: const Color(0xFFCD7F32).withOpacity(0.3),
+            color: const Color(0xFFCD7F32).withValues(alpha: 0.3),
             blurRadius: 6,
             spreadRadius: 1,
           ),
         ];
-      default:
+      case PlayerTier.beginner:
+        return null; // No glow for beginners
+      case null:
         return null;
     }
   }
@@ -243,8 +247,12 @@ class Avatar extends StatelessWidget {
       case PlayerTier.intermediate:
         icon = Icons.trending_up;
         break;
-      default:
-        return const SizedBox.shrink();
+      case PlayerTier.beginner:
+        icon = Icons.sports_golf;
+        break;
+      case null:
+        icon = Icons.person;
+        break;
     }
 
     return Container(
@@ -256,7 +264,7 @@ class Avatar extends StatelessWidget {
         border: Border.all(color: DesignTokens.neutral0, width: 2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),

@@ -94,7 +94,7 @@ class _MemberManagementPageState extends ConsumerState<MemberManagementPage>
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
-                      color: DesignTokens.primary600.withOpacity(0.1),
+                      color: DesignTokens.primary600.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(
                         DesignTokens.radiusFull,
                       ),
@@ -314,7 +314,7 @@ class _MemberManagementPageState extends ConsumerState<MemberManagementPage>
               ),
               decoration: BoxDecoration(
                 color: isAdmin
-                    ? DesignTokens.info.withOpacity(0.1)
+                    ? DesignTokens.info.withValues(alpha: 0.1)
                     : DesignTokens.neutral100,
                 borderRadius: BorderRadius.circular(DesignTokens.radiusFull),
                 border: Border.all(
@@ -430,9 +430,7 @@ class _MemberManagementPageState extends ConsumerState<MemberManagementPage>
               ),
             ],
             onSelected: (role) {
-              if (role != null) {
-                _changeRole(member, role, isAdmin);
-              }
+              _changeRole(member, role, isAdmin);
             },
           ),
         ],
@@ -447,7 +445,9 @@ class _MemberManagementPageState extends ConsumerState<MemberManagementPage>
           decoration: BoxDecoration(
             color: DesignTokens.neutral0,
             borderRadius: BorderRadius.circular(DesignTokens.radiusXl),
-            border: Border.all(color: DesignTokens.warning.withOpacity(0.3)),
+            border: Border.all(
+              color: DesignTokens.warning.withValues(alpha: 0.3),
+            ),
             boxShadow: DesignTokens.shadowSm,
           ),
           child: Column(
@@ -646,12 +646,14 @@ class _MemberManagementPageState extends ConsumerState<MemberManagementPage>
 
     if (success && mounted) {
       await _loadPendingMembers(); // Reload the list
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('${member.player.name}님의 가입을 승인했습니다'),
-          backgroundColor: DesignTokens.success,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${member.player.name}님의 가입을 승인했습니다'),
+            backgroundColor: DesignTokens.success,
+          ),
+        );
+      }
     }
   }
 
@@ -667,12 +669,14 @@ class _MemberManagementPageState extends ConsumerState<MemberManagementPage>
 
     if (success && mounted) {
       await _loadPendingMembers(); // Reload the list
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('${member.player.name}님의 가입을 거절했습니다'),
-          backgroundColor: DesignTokens.error,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${member.player.name}님의 가입을 거절했습니다'),
+            backgroundColor: DesignTokens.error,
+          ),
+        );
+      }
     }
   }
 }

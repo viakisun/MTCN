@@ -100,7 +100,7 @@ class _PremiumButtonState extends State<PremiumButton> {
         .animate(target: _isPressed ? 1 : 0)
         .shimmer(
           duration: DesignTokens.durationNormal,
-          color: Colors.white.withOpacity(0.3),
+          color: Colors.white.withValues(alpha: 0.3),
         );
   }
 
@@ -117,7 +117,6 @@ class _PremiumButtonState extends State<PremiumButton> {
           vertical: DesignTokens.spacing4,
         );
       case PremiumButtonSize.medium:
-      default:
         return const EdgeInsets.symmetric(
           horizontal: DesignTokens.spacing5,
           vertical: DesignTokens.spacing3,
@@ -132,7 +131,6 @@ class _PremiumButtonState extends State<PremiumButton> {
       case PremiumButtonSize.large:
         return DesignTokens.fontLg;
       case PremiumButtonSize.medium:
-      default:
         return DesignTokens.fontBase;
     }
   }
@@ -144,7 +142,6 @@ class _PremiumButtonState extends State<PremiumButton> {
       case PremiumButtonSize.large:
         return 24;
       case PremiumButtonSize.medium:
-      default:
         return 20;
     }
   }
@@ -156,7 +153,6 @@ class _PremiumButtonState extends State<PremiumButton> {
       case PremiumButtonSize.large:
         return DesignTokens.spacing3;
       case PremiumButtonSize.medium:
-      default:
         return DesignTokens.spacing2;
     }
   }
@@ -200,7 +196,9 @@ class _PremiumButtonState extends State<PremiumButton> {
       case PremiumButtonStyle.ghost:
         return BoxDecoration(
           color: isEnabled
-              ? DesignTokens.primary600.withOpacity(DesignTokens.opacity10)
+              ? DesignTokens.primary600.withValues(
+                  alpha: DesignTokens.opacity10,
+                )
               : DesignTokens.neutral200,
           borderRadius: radius,
         );

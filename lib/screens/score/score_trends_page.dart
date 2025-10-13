@@ -296,7 +296,11 @@ class _ScoreTrendsPageState extends ConsumerState<ScoreTrendsPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: DesignTokens.neutral0.withOpacity(0.8), size: 24),
+          Icon(
+            icon,
+            color: DesignTokens.neutral0.withValues(alpha: 0.8),
+            size: 24,
+          ),
           const SizedBox(height: DesignTokens.spacing2),
           Text(
             value,
@@ -311,7 +315,7 @@ class _ScoreTrendsPageState extends ConsumerState<ScoreTrendsPage> {
             label,
             style: TextStyle(
               fontSize: DesignTokens.fontXs,
-              color: DesignTokens.neutral0.withOpacity(0.8),
+              color: DesignTokens.neutral0.withValues(alpha: 0.8),
             ),
           ),
         ],

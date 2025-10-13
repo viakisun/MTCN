@@ -123,7 +123,7 @@ class _QRCheckinPageState extends ConsumerState<QRCheckinPage> {
                     widget.rounding.courseName,
                     style: TextStyle(
                       fontSize: DesignTokens.fontSm,
-                      color: DesignTokens.neutral0.withOpacity(0.8),
+                      color: DesignTokens.neutral0.withValues(alpha: 0.8),
                     ),
                   ),
                   const SizedBox(height: DesignTokens.spacing1),
@@ -131,7 +131,7 @@ class _QRCheckinPageState extends ConsumerState<QRCheckinPage> {
                     '${widget.rounding.date} ${widget.rounding.time}',
                     style: TextStyle(
                       fontSize: DesignTokens.fontSm,
-                      color: DesignTokens.neutral0.withOpacity(0.8),
+                      color: DesignTokens.neutral0.withValues(alpha: 0.8),
                     ),
                   ),
                 ],
@@ -203,7 +203,9 @@ class _QRCheckinPageState extends ConsumerState<QRCheckinPage> {
                       Container(
                         padding: const EdgeInsets.all(DesignTokens.spacing3),
                         decoration: BoxDecoration(
-                          color: DesignTokens.primary600.withOpacity(0.05),
+                          color: DesignTokens.primary600.withValues(
+                            alpha: 0.05,
+                          ),
                           borderRadius: BorderRadius.circular(
                             DesignTokens.radiusLg,
                           ),
@@ -265,7 +267,9 @@ class _QRCheckinPageState extends ConsumerState<QRCheckinPage> {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: DesignTokens.primary600.withOpacity(0.1),
+                              color: DesignTokens.primary600.withValues(
+                                alpha: 0.1,
+                              ),
                               borderRadius: BorderRadius.circular(
                                 DesignTokens.radiusFull,
                               ),
@@ -371,7 +375,7 @@ class _QRCheckinPageState extends ConsumerState<QRCheckinPage> {
         padding: const EdgeInsets.all(DesignTokens.spacing3),
         decoration: BoxDecoration(
           color: isCheckedIn
-              ? DesignTokens.success.withOpacity(0.05)
+              ? DesignTokens.success.withValues(alpha: 0.05)
               : DesignTokens.neutral50,
           borderRadius: BorderRadius.circular(DesignTokens.radiusLg),
           border: Border.all(

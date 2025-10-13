@@ -153,7 +153,7 @@ class _ActivityFeedCardState extends State<ActivityFeedCard> {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: _getActivityColor().withOpacity(0.1),
+                            color: _getActivityColor().withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(
                               DesignTokens.radiusFull,
                             ),
@@ -248,7 +248,7 @@ class _ActivityFeedCardState extends State<ActivityFeedCard> {
                       vertical: DesignTokens.spacing2,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: Colors.white.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(
                         DesignTokens.radiusFull,
                       ),

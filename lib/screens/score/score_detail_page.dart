@@ -134,7 +134,7 @@ class ScoreDetailPage extends ConsumerWidget {
                           Container(
                             width: 1,
                             height: 40,
-                            color: Colors.white.withOpacity(0.3),
+                            color: Colors.white.withValues(alpha: 0.3),
                           ),
                           _buildScoreStat(
                             label: 'Par',
@@ -144,7 +144,7 @@ class ScoreDetailPage extends ConsumerWidget {
                           Container(
                             width: 1,
                             height: 40,
-                            color: Colors.white.withOpacity(0.3),
+                            color: Colors.white.withValues(alpha: 0.3),
                           ),
                           _buildScoreStat(
                             label: '대비',
@@ -334,7 +334,7 @@ class ScoreDetailPage extends ConsumerWidget {
           label,
           style: TextStyle(
             fontSize: DesignTokens.fontXs,
-            color: color.withOpacity(0.8),
+            color: color.withValues(alpha: 0.8),
           ),
         ),
         const SizedBox(height: DesignTokens.spacing1),
@@ -387,7 +387,8 @@ class ScoreDetailPage extends ConsumerWidget {
           // Front 9
           DataTable(
             headingRowHeight: 40,
-            dataRowHeight: 40,
+            dataRowMinHeight: 40,
+            dataRowMaxHeight: 40,
             columnSpacing: 20,
             headingTextStyle: const TextStyle(
               fontSize: DesignTokens.fontXs,
@@ -438,7 +439,8 @@ class ScoreDetailPage extends ConsumerWidget {
           // Back 9
           DataTable(
             headingRowHeight: 40,
-            dataRowHeight: 40,
+            dataRowMinHeight: 40,
+            dataRowMaxHeight: 40,
             columnSpacing: 20,
             headingTextStyle: const TextStyle(
               fontSize: DesignTokens.fontXs,

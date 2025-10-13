@@ -147,7 +147,7 @@ class GroupMember {
       case 'banned':
         return MemberStatus.banned;
       default:
-        return MemberStatus.active;
+        return MemberStatus.pending;
     }
   }
 

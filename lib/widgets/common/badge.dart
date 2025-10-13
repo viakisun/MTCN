@@ -69,7 +69,6 @@ class Badge extends StatelessWidget {
           vertical: DesignTokens.spacing2,
         );
       case BadgeSize.medium:
-      default:
         return const EdgeInsets.symmetric(
           horizontal: DesignTokens.spacing3,
           vertical: DesignTokens.spacing1,
@@ -84,7 +83,6 @@ class Badge extends StatelessWidget {
       case BadgeSize.large:
         return DesignTokens.fontBase;
       case BadgeSize.medium:
-      default:
         return DesignTokens.fontSm;
     }
   }

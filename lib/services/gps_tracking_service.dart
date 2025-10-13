@@ -27,7 +27,7 @@ class LocationData {
       altitude: position.altitude,
       speed: position.speed,
       accuracy: position.accuracy,
-      timestamp: position.timestamp ?? DateTime.now(),
+      timestamp: position.timestamp,
     );
   }
 

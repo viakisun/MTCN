@@ -32,6 +32,7 @@ class _GpsTrackingMapWidgetState extends ConsumerState<GpsTrackingMapWidget> {
   bool _isTracking = false;
   LocationData? _currentLocation;
   double _totalDistance = 0.0;
+  // ignore: prefer_final_fields
   List<LatLng> _pathPoints = [];
 
   @override
@@ -225,7 +226,7 @@ class _GpsTrackingMapWidgetState extends ConsumerState<GpsTrackingMapWidget> {
                   child: Container(
                     padding: const EdgeInsets.all(DesignTokens.spacing3),
                     decoration: BoxDecoration(
-                      color: DesignTokens.neutral0.withOpacity(0.95),
+                      color: DesignTokens.neutral0.withValues(alpha: 0.95),
                       borderRadius: BorderRadius.circular(
                         DesignTokens.radiusLg,
                       ),

@@ -308,7 +308,9 @@ class _RealTimeGamePageState extends ConsumerState<RealTimeGamePage> {
                                         end: Alignment.bottomRight,
                                         colors: [
                                           player.avatarColor,
-                                          player.avatarColor.withOpacity(0.7),
+                                          player.avatarColor.withValues(
+                                            alpha: 0.7,
+                                          ),
                                         ],
                                       ),
                                       shape: BoxShape.circle,
@@ -454,7 +456,7 @@ class _RealTimeGamePageState extends ConsumerState<RealTimeGamePage> {
               color: DesignTokens.neutral0,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withValues(alpha: 0.1),
                   blurRadius: 10,
                   offset: const Offset(0, -2),
                 ),

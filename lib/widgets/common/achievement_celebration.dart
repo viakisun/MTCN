@@ -87,8 +87,8 @@ class _AchievementCelebrationState extends State<AchievementCelebration>
       case AchievementType.bestScore:
       case AchievementType.underPar:
         return DesignTokens.accent500;
-      default:
-        return DesignTokens.primary600;
+      case AchievementType.perfectPutt:
+        return DesignTokens.success;
     }
   }
 
@@ -101,7 +101,7 @@ class _AchievementCelebrationState extends State<AchievementCelebration>
         // Background overlay
         GestureDetector(
           onTap: _close,
-          child: Container(color: Colors.black.withOpacity(0.7)),
+          child: Container(color: Colors.black.withValues(alpha: 0.7)),
         ),
 
         // Confetti
@@ -139,7 +139,7 @@ class _AchievementCelebrationState extends State<AchievementCelebration>
                   borderRadius: BorderRadius.circular(DesignTokens.radius3xl),
                   boxShadow: [
                     BoxShadow(
-                      color: color.withOpacity(0.3),
+                      color: color.withValues(alpha: 0.3),
                       blurRadius: 24,
                       spreadRadius: 4,
                     ),
@@ -156,12 +156,12 @@ class _AchievementCelebrationState extends State<AchievementCelebration>
                         gradient: LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                          colors: [color, color.withOpacity(0.7)],
+                          colors: [color, color.withValues(alpha: 0.7)],
                         ),
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: color.withOpacity(0.4),
+                            color: color.withValues(alpha: 0.4),
                             blurRadius: 16,
                             spreadRadius: 2,
                           ),
@@ -222,7 +222,7 @@ class _AchievementCelebrationState extends State<AchievementCelebration>
                           horizontal: DesignTokens.spacing6,
                           vertical: DesignTokens.spacing3,
                         ),
-                        backgroundColor: color.withOpacity(0.1),
+                        backgroundColor: color.withValues(alpha: 0.1),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(
                             DesignTokens.radiusFull,

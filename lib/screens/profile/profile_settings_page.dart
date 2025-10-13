@@ -440,7 +440,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: DesignTokens.primary600,
+            activeThumbColor: DesignTokens.primary600,
           ),
         ],
       ),
@@ -461,9 +461,9 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
         child: Container(
           padding: const EdgeInsets.all(DesignTokens.spacing3),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.05),
+            color: color.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(DesignTokens.radiusLg),
-            border: Border.all(color: color.withOpacity(0.2)),
+            border: Border.all(color: color.withValues(alpha: 0.2)),
           ),
           child: Row(
             children: [
@@ -471,7 +471,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(DesignTokens.radiusMd),
                 ),
                 child: Icon(icon, color: color, size: 20),

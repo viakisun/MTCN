@@ -470,7 +470,7 @@ class _CheerChatWidgetState extends ConsumerState<CheerChatWidget> {
                     vertical: 2,
                   ),
                   decoration: BoxDecoration(
-                    color: DesignTokens.success.withOpacity(0.1),
+                    color: DesignTokens.success.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(DesignTokens.radiusMd),
                   ),
                   child: Text(

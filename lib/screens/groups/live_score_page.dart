@@ -559,7 +559,7 @@ class _LiveScorePageState extends ConsumerState<LiveScorePage> {
                     .animate()
                     .fadeIn(duration: 500.ms, delay: (index * 100).ms)
                     .slideY(begin: 0.2, end: 0);
-              }).toList(),
+              }),
 
               const SizedBox(height: DesignTokens.spacing6),
 

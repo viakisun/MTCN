@@ -18,8 +18,8 @@ class PlayerDetailSheet extends StatelessWidget {
         return '중급자';
       case PlayerTier.beginner:
         return '초보자';
-      default:
-        return '초보자';
+      case null:
+        return '미분류';
     }
   }
 
