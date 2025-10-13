@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 /// 라운딩 관련 열거형들
 enum RoundingType {
   full18('18홀', 18),
@@ -10,6 +8,8 @@ enum RoundingType {
 
   final String displayName;
   final int holeCount;
+
+  String get apiValue => name;
 
   static RoundingType fromString(String value) {
     switch (value) {
@@ -137,6 +137,8 @@ enum RoundingDifficulty {
 
   final String displayName;
   final int level;
+
+  String get apiValue => name;
 
   static RoundingDifficulty fromString(String value) {
     switch (value) {

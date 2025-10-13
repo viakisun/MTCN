@@ -24,6 +24,9 @@ class Invitation {
     this.metadata,
   });
 
+  // recipientId는 inviteeId와 같음
+  String get recipientId => inviteeId;
+
   Invitation copyWith({
     String? id,
     String? groupId,

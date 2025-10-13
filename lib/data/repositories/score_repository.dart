@@ -1,64 +1,40 @@
-import '../../models/score_record.dart';
-import '../mock/mock_scores.dart';
+import '../../domain/repositories/score_repository.dart';
+import '../../data/models/score_record.dart';
+import '../../data/services/mock_database_service.dart';
 
-/// Repository for score data access
-abstract class ScoreRepository {
-  Future<List<ScoreRecord>> getAllScores();
-  Future<ScoreRecord> getScoreById(String id);
-  Future<List<ScoreRecord>> getExcellentScores();
-  Future<List<ScoreRecord>> getGoodScores();
-  Future<List<ScoreRecord>> getRecentScores({int days = 30});
-  Future<ScoreRecord> createScore(ScoreRecord score);
-  Future<ScoreRecord> updateScore(ScoreRecord score);
-  Future<void> deleteScore(String id);
-}
+/// Mock implementation of IScoreRepository
+class MockScoreRepository implements IScoreRepository {
+  final IDatabaseService _databaseService;
 
-/// Mock implementation of ScoreRepository
-class MockScoreRepository implements ScoreRepository {
+  MockScoreRepository(this._databaseService);
+
   @override
-  Future<List<ScoreRecord>> getAllScores() async {
-    await Future.delayed(const Duration(milliseconds: 300));
-    return MockScores.all;
+  Future<List<ScoreRecord>> getScoreRecords({
+    String? playerId,
+    String? roundingId,
+    String? qualityFilter,
+    int? limit,
+    int? offset,
+  }) async {
+    return _databaseService.getScoreRecords(
+      playerId: playerId,
+      roundingId: roundingId,
+      qualityFilter: qualityFilter,
+    );
   }
 
   @override
-  Future<ScoreRecord> getScoreById(String id) async {
-    await Future.delayed(const Duration(milliseconds: 200));
-    return MockScores.findById(id);
+  Future<ScoreRecord?> getScoreRecordById(String id) async {
+    return _databaseService.getScoreRecordById(id);
   }
 
   @override
-  Future<List<ScoreRecord>> getExcellentScores() async {
-    await Future.delayed(const Duration(milliseconds: 300));
-    return MockScores.excellentScores();
+  Future<ScoreRecord> createScoreRecord(ScoreRecord scoreRecord) async {
+    return _databaseService.createScoreRecord(scoreRecord);
   }
 
   @override
-  Future<List<ScoreRecord>> getGoodScores() async {
-    await Future.delayed(const Duration(milliseconds: 300));
-    return MockScores.goodScores();
-  }
-
-  @override
-  Future<List<ScoreRecord>> getRecentScores({int days = 30}) async {
-    await Future.delayed(const Duration(milliseconds: 300));
-    return MockScores.recentScores(days: days);
-  }
-
-  @override
-  Future<ScoreRecord> createScore(ScoreRecord score) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    return score;
-  }
-
-  @override
-  Future<ScoreRecord> updateScore(ScoreRecord score) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    return score;
-  }
-
-  @override
-  Future<void> deleteScore(String id) async {
-    await Future.delayed(const Duration(milliseconds: 500));
+  Future<ScoreRecord> updateScoreRecord(ScoreRecord scoreRecord) async {
+    return _databaseService.updateScoreRecord(scoreRecord);
   }
 }

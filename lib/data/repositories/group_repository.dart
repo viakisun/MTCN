@@ -1,57 +1,43 @@
-import '../../models/group.dart';
-import '../mock/mock_groups.dart';
+import '../../domain/repositories/group_repository.dart';
+import '../../data/models/group.dart';
+import '../../data/services/mock_database_service.dart';
 
-/// Repository for group data access
-abstract class GroupRepository {
-  Future<List<Group>> getAllGroups();
-  Future<Group> getGroupById(String id);
-  Future<List<Group>> getActiveGroups();
-  Future<List<Group>> getNewGroups();
-  Future<Group> createGroup(Group group);
-  Future<Group> updateGroup(Group group);
-  Future<void> deleteGroup(String id);
-}
+/// Mock implementation of IGroupRepository
+class MockGroupRepository implements IGroupRepository {
+  final IDatabaseService _databaseService;
 
-/// Mock implementation of GroupRepository
-class MockGroupRepository implements GroupRepository {
+  MockGroupRepository(this._databaseService);
+
   @override
-  Future<List<Group>> getAllGroups() async {
-    await Future.delayed(const Duration(milliseconds: 300));
-    return MockGroups.all;
+  Future<List<Group>> getGroups({
+    String? statusFilter,
+    String? searchKeyword,
+    int? limit,
+    int? offset,
+  }) async {
+    return _databaseService.getGroups(
+      statusFilter: statusFilter,
+      searchKeyword: searchKeyword,
+    );
   }
 
   @override
-  Future<Group> getGroupById(String id) async {
-    await Future.delayed(const Duration(milliseconds: 200));
-    return MockGroups.findById(id);
-  }
-
-  @override
-  Future<List<Group>> getActiveGroups() async {
-    await Future.delayed(const Duration(milliseconds: 300));
-    return MockGroups.activeGroups();
-  }
-
-  @override
-  Future<List<Group>> getNewGroups() async {
-    await Future.delayed(const Duration(milliseconds: 300));
-    return MockGroups.newGroups();
+  Future<Group?> getGroupById(String id) async {
+    return _databaseService.getGroupById(id);
   }
 
   @override
   Future<Group> createGroup(Group group) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    return group;
+    return _databaseService.createGroup(group);
   }
 
   @override
   Future<Group> updateGroup(Group group) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    return group;
+    return _databaseService.updateGroup(group);
   }
 
   @override
   Future<void> deleteGroup(String id) async {
-    await Future.delayed(const Duration(milliseconds: 500));
+    return _databaseService.deleteGroup(id);
   }
 }

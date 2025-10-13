@@ -1,5 +1,4 @@
 /// 채팅 관련 열거형들
-import 'package:flutter/material.dart';
 
 /// 메시지 타입
 enum MessageType {

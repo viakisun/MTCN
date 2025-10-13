@@ -1,54 +1,34 @@
-import '../../models/player.dart';
-import '../mock/mock_players.dart';
+import '../../domain/repositories/player_repository.dart';
+import '../../data/models/player.dart';
+import '../../data/services/mock_database_service.dart';
 
-/// Repository for player data access
-/// This abstraction layer allows easy swapping between mock and real API
-abstract class PlayerRepository {
-  Future<Player> getCurrentUser();
-  Future<List<Player>> getAllPlayers();
-  Future<Player> getPlayerById(String id);
-  Future<List<Player>> getPlayersByIds(List<String> ids);
-  Future<Player> updatePlayer(Player player);
-  Future<void> deletePlayer(String id);
-}
+/// Mock implementation of IPlayerRepository
+class MockPlayerRepository implements IPlayerRepository {
+  final IDatabaseService _databaseService;
 
-/// Mock implementation of PlayerRepository
-class MockPlayerRepository implements PlayerRepository {
+  MockPlayerRepository(this._databaseService);
+
   @override
-  Future<Player> getCurrentUser() async {
-    // Simulate network delay
-    await Future.delayed(const Duration(milliseconds: 300));
-    return MockPlayers.currentUser;
+  Future<List<Player>> getPlayers({
+    String? searchKeyword,
+    int? limit,
+    int? offset,
+  }) async {
+    return _databaseService.getPlayers(searchKeyword: searchKeyword);
   }
 
   @override
-  Future<List<Player>> getAllPlayers() async {
-    await Future.delayed(const Duration(milliseconds: 300));
-    return MockPlayers.all;
+  Future<Player?> getPlayerById(String id) async {
+    return _databaseService.getPlayerById(id);
   }
 
   @override
-  Future<Player> getPlayerById(String id) async {
-    await Future.delayed(const Duration(milliseconds: 200));
-    return MockPlayers.findById(id);
-  }
-
-  @override
-  Future<List<Player>> getPlayersByIds(List<String> ids) async {
-    await Future.delayed(const Duration(milliseconds: 200));
-    return MockPlayers.findByIds(ids);
+  Future<Player> createPlayer(Player player) async {
+    return _databaseService.createPlayer(player);
   }
 
   @override
   Future<Player> updatePlayer(Player player) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    // In real implementation, this would call API
-    return player;
-  }
-
-  @override
-  Future<void> deletePlayer(String id) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    // In real implementation, this would call API
+    return _databaseService.updatePlayer(player);
   }
 }

@@ -1,64 +1,57 @@
-import '../../models/rounding.dart';
-import '../mock/mock_roundings.dart';
+import '../../domain/repositories/rounding_repository.dart';
+import '../../data/models/rounding.dart';
+import '../../data/services/mock_database_service.dart';
+import '../../core/enums/rounding_enums.dart';
 
-/// Repository for rounding data access
-abstract class RoundingRepository {
-  Future<List<Rounding>> getAllRoundings();
-  Future<Rounding> getRoundingById(String id);
-  Future<List<Rounding>> getUpcomingRoundings();
-  Future<List<Rounding>> getInProgressRoundings();
-  Future<List<Rounding>> getCompletedRoundings();
-  Future<Rounding> createRounding(Rounding rounding);
-  Future<Rounding> updateRounding(Rounding rounding);
-  Future<void> deleteRounding(String id);
-}
+/// Mock implementation of IRoundingRepository
+class MockRoundingRepository implements IRoundingRepository {
+  final IDatabaseService _databaseService;
 
-/// Mock implementation of RoundingRepository
-class MockRoundingRepository implements RoundingRepository {
+  MockRoundingRepository(this._databaseService);
+
   @override
-  Future<List<Rounding>> getAllRoundings() async {
-    await Future.delayed(const Duration(milliseconds: 300));
-    return MockRoundings.all;
+  Future<List<Rounding>> getRoundings({
+    String? statusFilter,
+    String? searchKeyword,
+    int? limit,
+    int? offset,
+  }) async {
+    return _databaseService.getRoundings(
+      statusFilter: statusFilter,
+      searchKeyword: searchKeyword,
+    );
   }
 
   @override
-  Future<Rounding> getRoundingById(String id) async {
-    await Future.delayed(const Duration(milliseconds: 200));
-    return MockRoundings.findById(id);
-  }
-
-  @override
-  Future<List<Rounding>> getUpcomingRoundings() async {
-    await Future.delayed(const Duration(milliseconds: 300));
-    return MockRoundings.upcomingRoundings();
-  }
-
-  @override
-  Future<List<Rounding>> getInProgressRoundings() async {
-    await Future.delayed(const Duration(milliseconds: 300));
-    return MockRoundings.inProgressRoundings();
-  }
-
-  @override
-  Future<List<Rounding>> getCompletedRoundings() async {
-    await Future.delayed(const Duration(milliseconds: 300));
-    return MockRoundings.completedRoundings();
+  Future<Rounding?> getRoundingById(String id) async {
+    return _databaseService.getRoundingById(id);
   }
 
   @override
   Future<Rounding> createRounding(Rounding rounding) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    return rounding;
+    return _databaseService.createRounding(rounding);
   }
 
   @override
   Future<Rounding> updateRounding(Rounding rounding) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    return rounding;
+    return _databaseService.updateRounding(rounding);
   }
 
   @override
   Future<void> deleteRounding(String id) async {
-    await Future.delayed(const Duration(milliseconds: 500));
+    return _databaseService.deleteRounding(id);
+  }
+
+  @override
+  Future<Rounding> updateRoundingStatus(
+    String id,
+    RoundingStatus status,
+  ) async {
+    final rounding = await _databaseService.getRoundingById(id);
+    if (rounding == null) {
+      throw Exception('Rounding not found');
+    }
+    final updatedRounding = rounding.copyWith(status: status);
+    return _databaseService.updateRounding(updatedRounding);
   }
 }

@@ -1,6 +1,7 @@
 import '../../core/enums/group_enums.dart';
+import 'player.dart';
 
-/// 그룹 멤버 모델 (리팩토링된 버전)
+/// 그룹 멤버 모델 (MockDatabaseService 호환)
 class GroupMember {
   final String id;
   final String groupId;
@@ -12,6 +13,7 @@ class GroupMember {
   final String? nickname;
   final Map<String, dynamic>? permissions;
   final bool isActive;
+  final Player player; // Added player field
 
   const GroupMember({
     required this.id,
@@ -20,6 +22,7 @@ class GroupMember {
     required this.role,
     required this.status,
     required this.joinedAt,
+    required this.player, // Added to constructor
     this.leftAt,
     this.nickname,
     this.permissions,
@@ -37,6 +40,7 @@ class GroupMember {
     String? nickname,
     Map<String, dynamic>? permissions,
     bool? isActive,
+    Player? player,
   }) {
     return GroupMember(
       id: id ?? this.id,
@@ -49,6 +53,7 @@ class GroupMember {
       nickname: nickname ?? this.nickname,
       permissions: permissions ?? this.permissions,
       isActive: isActive ?? this.isActive,
+      player: player ?? this.player,
     );
   }
 
@@ -64,6 +69,7 @@ class GroupMember {
       'nickname': nickname,
       'permissions': permissions,
       'isActive': isActive,
+      'player': player.toJson(),
     };
   }
 
@@ -81,19 +87,46 @@ class GroupMember {
       nickname: json['nickname'] as String?,
       permissions: json['permissions'] as Map<String, dynamic>?,
       isActive: json['isActive'] as bool? ?? true,
+      player: Player.fromJson(json['player'] as Map<String, dynamic>),
     );
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    return other is GroupMember && other.id == id;
+    return other is GroupMember &&
+        other.id == id &&
+        other.groupId == groupId &&
+        other.playerId == playerId &&
+        other.role == role &&
+        other.status == status &&
+        other.joinedAt == joinedAt &&
+        other.leftAt == leftAt &&
+        other.nickname == nickname &&
+        other.permissions == permissions &&
+        other.isActive == isActive &&
+        other.player == player;
   }
 
   @override
-  int get hashCode => id.hashCode;
+  int get hashCode {
+    return Object.hash(
+      id,
+      groupId,
+      playerId,
+      role,
+      status,
+      joinedAt,
+      leftAt,
+      nickname,
+      permissions,
+      isActive,
+      player,
+    );
+  }
 
   @override
-  String toString() =>
-      'GroupMember(id: $id, groupId: $groupId, playerId: $playerId, role: $role)';
+  String toString() {
+    return 'GroupMember(id: $id, groupId: $groupId, playerId: $playerId, role: $role, status: $status, joinedAt: $joinedAt, leftAt: $leftAt, nickname: $nickname, permissions: $permissions, isActive: $isActive, player: $player)';
+  }
 }

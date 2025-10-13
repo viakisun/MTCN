@@ -1,4 +1,5 @@
 import '../../data/models/rounding.dart';
+import '../../core/enums/rounding_enums.dart';
 
 /// 알림 서비스 인터페이스
 abstract class INotificationService {
@@ -87,9 +88,9 @@ class NotificationService implements INotificationService {
       '라운딩 상태 변경 알림: ${rounding.title} - ${oldStatus.displayName} → ${rounding.status.displayName}',
     );
 
-    for (final playerId in rounding.players) {
+    for (final player in rounding.players) {
       await sendPushNotification(
-        playerId,
+        player.id,
         '라운딩 상태 변경',
         '${rounding.title} 라운딩 상태가 ${rounding.status.displayName}로 변경되었습니다',
       );

@@ -1,8 +1,37 @@
 import '../../core/constants/app_constants.dart';
-import '../../core/constants/golf_courses.dart';
-import '../../core/enums/rounding_enums.dart';
-import '../utils/result.dart';
-import '../usecases/rounding/create_rounding_usecase.dart';
+
+/// 라운딩 생성 파라미터
+class CreateRoundingParams {
+  final String title;
+  final String courseName;
+  final String date;
+  final String time;
+  final int greenFee;
+  final String weather;
+  final int temperature;
+  final List<String> playerIds;
+  final int holes;
+  final String? description;
+  final String? groupName;
+  final int? fee;
+  final int? maxPlayers;
+
+  const CreateRoundingParams({
+    required this.title,
+    required this.courseName,
+    required this.date,
+    required this.time,
+    required this.greenFee,
+    required this.weather,
+    required this.temperature,
+    required this.playerIds,
+    required this.holes,
+    this.description,
+    this.groupName,
+    this.fee,
+    this.maxPlayers,
+  });
+}
 
 /// 검증 서비스 인터페이스
 abstract class IValidationService {
@@ -41,23 +70,22 @@ class ValidationService implements IValidationService {
     }
 
     // 골프장 검증
-    final courseExists = GolfCourseConstants.koreanCourses.any(
-      (course) => course.name == params.golfCourse.name,
-    );
-    if (!courseExists) {
-      errors['golfCourse'] = '유효한 골프장을 선택해주세요';
+    if (params.courseName.trim().isEmpty) {
+      errors['courseName'] = '골프장을 선택해주세요';
     }
 
     // 날짜 검증
     final now = DateTime.now();
-    if (params.date.isBefore(now.subtract(const Duration(days: 1)))) {
+    final roundingDate = DateTime.parse(params.date);
+    if (roundingDate.isBefore(now.subtract(const Duration(days: 1)))) {
       errors['date'] = '과거 날짜는 선택할 수 없습니다';
     }
 
     // 플레이어 수 검증
     if (params.playerIds.isEmpty) {
       errors['players'] = '최소 1명의 플레이어가 필요합니다';
-    } else if (params.playerIds.length > params.maxPlayers) {
+    } else if (params.maxPlayers != null &&
+        params.playerIds.length > params.maxPlayers!) {
       errors['players'] = '최대 참가 인원을 초과했습니다';
     }
 

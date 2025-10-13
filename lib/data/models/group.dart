@@ -1,74 +1,47 @@
 import '../../core/enums/group_enums.dart';
+import 'group_member.dart';
 
-/// 그룹 모델 (리팩토링된 버전)
+/// 그룹 모델 (MockDatabaseService 호환)
 class Group {
   final String id;
   final String name;
   final String description;
-  final GroupPrivacy privacy;
-  final GroupCategory category;
-  final int memberCount;
-  final String ownerId;
+  final String? avatarUrl;
+  final bool isPublic;
+  final GroupStatus status;
+  final List<GroupMember> members;
   final DateTime createdAt;
-  final DateTime updatedAt;
-  final String? avatar;
-  final List<String> tags;
-  final bool isActive;
-  final int? maxMembers;
-  final String? location;
-  final String? website;
 
   const Group({
     required this.id,
     required this.name,
     required this.description,
-    required this.privacy,
-    required this.category,
-    required this.memberCount,
-    required this.ownerId,
+    required this.isPublic,
+    required this.status,
+    required this.members,
     required this.createdAt,
-    required this.updatedAt,
-    this.avatar,
-    this.tags = const [],
-    this.isActive = true,
-    this.maxMembers,
-    this.location,
-    this.website,
+    this.avatarUrl,
   });
 
   Group copyWith({
     String? id,
     String? name,
     String? description,
-    GroupPrivacy? privacy,
-    GroupCategory? category,
-    int? memberCount,
-    String? ownerId,
+    String? avatarUrl,
+    bool? isPublic,
+    GroupStatus? status,
+    List<GroupMember>? members,
     DateTime? createdAt,
-    DateTime? updatedAt,
-    String? avatar,
-    List<String>? tags,
-    bool? isActive,
-    int? maxMembers,
-    String? location,
-    String? website,
   }) {
     return Group(
       id: id ?? this.id,
       name: name ?? this.name,
       description: description ?? this.description,
-      privacy: privacy ?? this.privacy,
-      category: category ?? this.category,
-      memberCount: memberCount ?? this.memberCount,
-      ownerId: ownerId ?? this.ownerId,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+      isPublic: isPublic ?? this.isPublic,
+      status: status ?? this.status,
+      members: members ?? this.members,
       createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-      avatar: avatar ?? this.avatar,
-      tags: tags ?? this.tags,
-      isActive: isActive ?? this.isActive,
-      maxMembers: maxMembers ?? this.maxMembers,
-      location: location ?? this.location,
-      website: website ?? this.website,
     );
   }
 
@@ -77,18 +50,11 @@ class Group {
       'id': id,
       'name': name,
       'description': description,
-      'privacy': privacy.apiValue,
-      'category': category.apiValue,
-      'memberCount': memberCount,
-      'ownerId': ownerId,
+      'avatarUrl': avatarUrl,
+      'isPublic': isPublic,
+      'status': status.apiValue,
+      'members': members.map((member) => member.toJson()).toList(),
       'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
-      'avatar': avatar,
-      'tags': tags,
-      'isActive': isActive,
-      'maxMembers': maxMembers,
-      'location': location,
-      'website': website,
     };
   }
 
@@ -97,30 +63,46 @@ class Group {
       id: json['id'] as String,
       name: json['name'] as String,
       description: json['description'] as String,
-      privacy: GroupPrivacy.fromString(json['privacy'] as String),
-      category: GroupCategory.fromString(json['category'] as String),
-      memberCount: json['memberCount'] as int,
-      ownerId: json['ownerId'] as String,
+      avatarUrl: json['avatarUrl'] as String?,
+      isPublic: json['isPublic'] as bool,
+      status: GroupStatus.fromString(json['status'] as String),
+      members: (json['members'] as List)
+          .map((m) => GroupMember.fromJson(m as Map<String, dynamic>))
+          .toList(),
       createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
-      avatar: json['avatar'] as String?,
-      tags: List<String>.from(json['tags'] as List? ?? []),
-      isActive: json['isActive'] as bool? ?? true,
-      maxMembers: json['maxMembers'] as int?,
-      location: json['location'] as String?,
-      website: json['website'] as String?,
     );
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    return other is Group && other.id == id;
+    return other is Group &&
+        other.id == id &&
+        other.name == name &&
+        other.description == description &&
+        other.avatarUrl == avatarUrl &&
+        other.isPublic == isPublic &&
+        other.status == status &&
+        other.members == members &&
+        other.createdAt == createdAt;
   }
 
   @override
-  int get hashCode => id.hashCode;
+  int get hashCode {
+    return Object.hash(
+      id,
+      name,
+      description,
+      avatarUrl,
+      isPublic,
+      status,
+      members,
+      createdAt,
+    );
+  }
 
   @override
-  String toString() => 'Group(id: $id, name: $name, memberCount: $memberCount)';
+  String toString() {
+    return 'Group(id: $id, name: $name, description: $description, avatarUrl: $avatarUrl, isPublic: $isPublic, status: $status, members: $members, createdAt: $createdAt)';
+  }
 }

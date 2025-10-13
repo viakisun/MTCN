@@ -1,83 +1,161 @@
-import '../../core/constants/golf_courses.dart';
 import '../../core/enums/rounding_enums.dart';
+import 'player.dart';
 
-/// 라운딩 모델 (리팩토링된 버전)
+/// 라운딩 옵션 모델
+class RoundingOptions {
+  final bool allowLateJoin;
+  final bool requireHandicap;
+  final bool allowGuests;
+  final String? specialRules;
+
+  const RoundingOptions({
+    this.allowLateJoin = true,
+    this.requireHandicap = false,
+    this.allowGuests = true,
+    this.specialRules,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'allowLateJoin': allowLateJoin,
+      'requireHandicap': requireHandicap,
+      'allowGuests': allowGuests,
+      'specialRules': specialRules,
+    };
+  }
+
+  factory RoundingOptions.fromJson(Map<String, dynamic> json) {
+    return RoundingOptions(
+      allowLateJoin: json['allowLateJoin'] as bool? ?? true,
+      requireHandicap: json['requireHandicap'] as bool? ?? false,
+      allowGuests: json['allowGuests'] as bool? ?? true,
+      specialRules: json['specialRules'] as String?,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is RoundingOptions &&
+        other.allowLateJoin == allowLateJoin &&
+        other.requireHandicap == requireHandicap &&
+        other.allowGuests == allowGuests &&
+        other.specialRules == specialRules;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(
+      allowLateJoin,
+      requireHandicap,
+      allowGuests,
+      specialRules,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'RoundingOptions(allowLateJoin: $allowLateJoin, requireHandicap: $requireHandicap, allowGuests: $allowGuests, specialRules: $specialRules)';
+  }
+}
+
+/// 라운딩 모델 (MockDatabaseService 호환)
 class Rounding {
   final String id;
   final String title;
-  final GolfCourse golfCourse;
-  final DateTime date;
-  final RoundingType type;
+  final String courseName;
+  final String? courseAddress;
+  final double? courseLatitude;
+  final double? courseLongitude;
+  final String date;
+  final String time;
   final RoundingStatus status;
-  final String organizerId;
-  final String groupId;
-  final List<String> players;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final int greenFee;
+  final String weather;
+  final int temperature;
+  final List<Player> players;
+  final int holes;
   final String? description;
+  final String groupName;
+  final int? fee;
+  final int? maxPlayers;
+  final RoundingOptions? options;
+  final RoundingType type;
   final RoundingPrivacy privacy;
   final RoundingDifficulty difficulty;
-  final int maxPlayers;
-  final int? fee;
-  final RoundingOptions? options;
 
   const Rounding({
     required this.id,
     required this.title,
-    required this.golfCourse,
+    required this.courseName,
     required this.date,
-    required this.type,
+    required this.time,
     required this.status,
-    required this.organizerId,
-    required this.groupId,
+    required this.greenFee,
+    required this.weather,
+    required this.temperature,
     required this.players,
-    required this.createdAt,
-    required this.updatedAt,
+    required this.holes,
+    required this.groupName,
+    this.courseAddress = '',
+    this.courseLatitude,
+    this.courseLongitude,
     this.description,
+    this.fee,
+    this.maxPlayers,
+    this.options,
+    this.type = RoundingType.full18,
     this.privacy = RoundingPrivacy.public,
     this.difficulty = RoundingDifficulty.intermediate,
-    this.maxPlayers = 4,
-    this.fee,
-    this.options,
   });
 
   Rounding copyWith({
     String? id,
     String? title,
-    GolfCourse? golfCourse,
-    DateTime? date,
-    RoundingType? type,
+    String? courseName,
+    String? courseAddress,
+    double? courseLatitude,
+    double? courseLongitude,
+    String? date,
+    String? time,
     RoundingStatus? status,
-    String? organizerId,
-    String? groupId,
-    List<String>? players,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    int? greenFee,
+    String? weather,
+    int? temperature,
+    List<Player>? players,
+    int? holes,
     String? description,
+    String? groupName,
+    int? fee,
+    int? maxPlayers,
+    RoundingOptions? options,
+    RoundingType? type,
     RoundingPrivacy? privacy,
     RoundingDifficulty? difficulty,
-    int? maxPlayers,
-    int? fee,
-    RoundingOptions? options,
   }) {
     return Rounding(
       id: id ?? this.id,
       title: title ?? this.title,
-      golfCourse: golfCourse ?? this.golfCourse,
+      courseName: courseName ?? this.courseName,
       date: date ?? this.date,
-      type: type ?? this.type,
+      time: time ?? this.time,
       status: status ?? this.status,
-      organizerId: organizerId ?? this.organizerId,
-      groupId: groupId ?? this.groupId,
+      greenFee: greenFee ?? this.greenFee,
+      weather: weather ?? this.weather,
+      temperature: temperature ?? this.temperature,
       players: players ?? this.players,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
+      holes: holes ?? this.holes,
+      groupName: groupName ?? this.groupName,
+      courseAddress: courseAddress ?? this.courseAddress,
+      courseLatitude: courseLatitude ?? this.courseLatitude,
+      courseLongitude: courseLongitude ?? this.courseLongitude,
       description: description ?? this.description,
+      fee: fee ?? this.fee,
+      maxPlayers: maxPlayers ?? this.maxPlayers,
+      options: options ?? this.options,
+      type: type ?? this.type,
       privacy: privacy ?? this.privacy,
       difficulty: difficulty ?? this.difficulty,
-      maxPlayers: maxPlayers ?? this.maxPlayers,
-      fee: fee ?? this.fee,
-      options: options ?? this.options,
     );
   }
 
@@ -85,21 +163,26 @@ class Rounding {
     return {
       'id': id,
       'title': title,
-      'golfCourse': golfCourse.name,
-      'date': date.toIso8601String(),
-      'type': type.apiValue,
+      'courseName': courseName,
+      'courseAddress': courseAddress,
+      'courseLatitude': courseLatitude,
+      'courseLongitude': courseLongitude,
+      'date': date,
+      'time': time,
       'status': status.apiValue,
-      'organizerId': organizerId,
-      'groupId': groupId,
-      'players': players,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'greenFee': greenFee,
+      'weather': weather,
+      'temperature': temperature,
+      'players': players.map((p) => p.toJson()).toList(),
+      'holes': holes,
       'description': description,
+      'groupName': groupName,
+      'fee': fee,
+      'maxPlayers': maxPlayers,
+      'options': options?.toJson(),
+      'type': type.apiValue,
       'privacy': privacy.apiValue,
       'difficulty': difficulty.apiValue,
-      'maxPlayers': maxPlayers,
-      'fee': fee,
-      'options': options?.toJson(),
     };
   }
 
@@ -107,95 +190,93 @@ class Rounding {
     return Rounding(
       id: json['id'] as String,
       title: json['title'] as String,
-      golfCourse: GolfCourseConstants.koreanCourses.firstWhere(
-        (course) => course.name == json['golfCourse'],
-        orElse: () => GolfCourseConstants.koreanCourses.first,
-      ),
-      date: DateTime.parse(json['date'] as String),
-      type: RoundingType.fromString(json['type'] as String),
+      courseName: json['courseName'] as String,
+      courseAddress: json['courseAddress'] as String? ?? '',
+      courseLatitude: json['courseLatitude'] as double?,
+      courseLongitude: json['courseLongitude'] as double?,
+      date: json['date'] as String,
+      time: json['time'] as String,
       status: RoundingStatus.fromString(json['status'] as String),
-      organizerId: json['organizerId'] as String,
-      groupId: json['groupId'] as String,
-      players: List<String>.from(json['players'] as List),
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
+      greenFee: json['greenFee'] as int,
+      weather: json['weather'] as String,
+      temperature: json['temperature'] as int,
+      players: (json['players'] as List)
+          .map((p) => Player.fromJson(p as Map<String, dynamic>))
+          .toList(),
+      holes: json['holes'] as int,
       description: json['description'] as String?,
+      groupName: json['groupName'] as String,
+      fee: json['fee'] as int?,
+      maxPlayers: json['maxPlayers'] as int?,
+      options: json['options'] != null
+          ? RoundingOptions.fromJson(json['options'] as Map<String, dynamic>)
+          : null,
+      type: RoundingType.fromString(json['type'] as String? ?? 'full18'),
       privacy: RoundingPrivacy.fromString(
         json['privacy'] as String? ?? 'public',
       ),
       difficulty: RoundingDifficulty.fromString(
         json['difficulty'] as String? ?? 'intermediate',
       ),
-      maxPlayers: json['maxPlayers'] as int? ?? 4,
-      fee: json['fee'] as int?,
-      options: json['options'] != null
-          ? RoundingOptions.fromJson(json['options'] as Map<String, dynamic>)
-          : null,
     );
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    return other is Rounding && other.id == id;
+    return other is Rounding &&
+        other.id == id &&
+        other.title == title &&
+        other.courseName == courseName &&
+        other.courseAddress == courseAddress &&
+        other.courseLatitude == courseLatitude &&
+        other.courseLongitude == courseLongitude &&
+        other.date == date &&
+        other.time == time &&
+        other.status == status &&
+        other.greenFee == greenFee &&
+        other.weather == weather &&
+        other.temperature == temperature &&
+        other.players == players &&
+        other.holes == holes &&
+        other.description == description &&
+        other.groupName == groupName &&
+        other.fee == fee &&
+        other.maxPlayers == maxPlayers &&
+        other.options == options &&
+        other.type == type &&
+        other.privacy == privacy &&
+        other.difficulty == difficulty;
   }
 
   @override
-  int get hashCode => id.hashCode;
+  int get hashCode {
+    return Object.hash(
+          id,
+          title,
+          courseName,
+          courseAddress,
+          courseLatitude,
+          courseLongitude,
+          date,
+          time,
+          status,
+          greenFee,
+          weather,
+          temperature,
+          players,
+          holes,
+          description,
+          groupName,
+          fee,
+          maxPlayers,
+          options,
+        ) ^
+        Object.hash(type, privacy, difficulty);
+  }
 
   @override
-  String toString() => 'Rounding(id: $id, title: $title, date: $date)';
-}
-
-/// 라운딩 옵션
-class RoundingOptions {
-  final bool includeCaddie;
-  final bool includeCart;
-  final bool includeMeal;
-  final String? mealType;
-  final Map<String, dynamic>? extras;
-
-  const RoundingOptions({
-    this.includeCaddie = false,
-    this.includeCart = false,
-    this.includeMeal = false,
-    this.mealType,
-    this.extras,
-  });
-
-  RoundingOptions copyWith({
-    bool? includeCaddie,
-    bool? includeCart,
-    bool? includeMeal,
-    String? mealType,
-    Map<String, dynamic>? extras,
-  }) {
-    return RoundingOptions(
-      includeCaddie: includeCaddie ?? this.includeCaddie,
-      includeCart: includeCart ?? this.includeCart,
-      includeMeal: includeMeal ?? this.includeMeal,
-      mealType: mealType ?? this.mealType,
-      extras: extras ?? this.extras,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'includeCaddie': includeCaddie,
-      'includeCart': includeCart,
-      'includeMeal': includeMeal,
-      'mealType': mealType,
-      'extras': extras,
-    };
-  }
-
-  factory RoundingOptions.fromJson(Map<String, dynamic> json) {
-    return RoundingOptions(
-      includeCaddie: json['includeCaddie'] as bool? ?? false,
-      includeCart: json['includeCart'] as bool? ?? false,
-      includeMeal: json['includeMeal'] as bool? ?? false,
-      mealType: json['mealType'] as String?,
-      extras: json['extras'] as Map<String, dynamic>?,
-    );
+  String toString() {
+    return 'Rounding(id: $id, title: $title, courseName: $courseName, courseAddress: $courseAddress, courseLatitude: $courseLatitude, courseLongitude: $courseLongitude, date: $date, time: $time, status: $status, greenFee: $greenFee, weather: $weather, temperature: $temperature, players: $players, holes: $holes, description: $description, groupName: $groupName, fee: $fee, maxPlayers: $maxPlayers, options: $options, type: $type, privacy: $privacy, difficulty: $difficulty)';
   }
 }
