@@ -1,0 +1,100 @@
+name: Issue Templates
+
+on:
+  issues:
+    types: [opened, labeled]
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  auto-label:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Auto-label issues
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const issue = context.payload.issue;
+          const labels = issue.labels.map(label => label.name);
+          
+          // 버그 키워드 감지
+          const bugKeywords = ['bug', 'error', 'crash', 'issue', 'problem', 'broken', '오류', '버그', '문제', '크래시'];
+          const isBug = bugKeywords.some(keyword => 
+            issue.title.toLowerCase().includes(keyword) || 
+            issue.body.toLowerCase().includes(keyword)
+          );
+          
+          // 기능 요청 키워드 감지
+          const featureKeywords = ['feature', 'enhancement', 'request', 'suggestion', 'improve', '기능', '요청', '개선', '제안'];
+          const isFeature = featureKeywords.some(keyword => 
+            issue.title.toLowerCase().includes(keyword) || 
+            issue.body.toLowerCase().includes(keyword)
+          );
+          
+          // 문서 관련 키워드 감지
+          const docKeywords = ['documentation', 'docs', 'readme', 'guide', '문서', '가이드', '설명'];
+          const isDocumentation = docKeywords.some(keyword => 
+            issue.title.toLowerCase().includes(keyword) || 
+            issue.body.toLowerCase().includes(keyword)
+          );
+          
+          // 라벨 추가
+          const newLabels = [];
+          if (isBug && !labels.includes('bug')) {
+            newLabels.push('bug');
+            newLabels.push('needs-triage');
+          }
+          if (isFeature && !labels.includes('enhancement')) {
+            newLabels.push('enhancement');
+            newLabels.push('feature-request');
+          }
+          if (isDocumentation && !labels.includes('documentation')) {
+            newLabels.push('documentation');
+          }
+          
+          // 우선순위 라벨 (키워드 기반)
+          if (issue.title.toLowerCase().includes('urgent') || 
+              issue.title.toLowerCase().includes('critical') ||
+              issue.title.toLowerCase().includes('긴급') ||
+              issue.title.toLowerCase().includes('중요')) {
+            newLabels.push('priority-high');
+          }
+          
+          if (newLabels.length > 0) {
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              labels: newLabels
+            });
+          }
+          
+          // 이슈가 7일 이상 열려있으면 알림
+          const createdDate = new Date(issue.created_at);
+          const now = new Date();
+          const daysOpen = (now - createdDate) / (1000 * 60 * 60 * 24);
+          
+          if (daysOpen >= 7 && !labels.includes('stale')) {
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body: `이 이슈가 ${Math.floor(daysOpen)}일 동안 열려있습니다. 
+              
+              추가 정보가 필요하거나 여전히 문제가 발생하고 있다면 댓글로 알려주세요! 
+              그렇지 않다면 이슈를 닫아주시면 됩니다. 🙏`
+            });
+            
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              labels: ['stale']
+            });
+          }

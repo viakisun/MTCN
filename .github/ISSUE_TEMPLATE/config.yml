@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 커뮤니티 토론
+    url: https://github.com/viakisun/MTCN/discussions
+    about: 일반적인 질문이나 아이디어를 공유하고 싶으신가요?
+  - name: 📖 빠른 시작 가이드
+    url: https://github.com/viakisun/MTCN/blob/main/QUICK_START.md
+    about: 앱 설치와 실행에 도움이 필요하신가요?
+  - name: 🐛 버그 신고
+    url: https://github.com/viakisun/MTCN/issues/new?template=bug_report.yml
+    about: 앱에서 버그를 발견하셨나요?

@@ -1,0 +1,108 @@
+name: ✨ 기능 요청
+description: 몇타치니(MTCN) 앱에 새로운 기능을 제안해주세요
+title: "[기능] "
+labels: ["enhancement", "feature-request"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        새로운 기능을 제안해주셔서 감사합니다! 🏌️‍♂️✨
+        
+        아래 정보를 작성해주시면 더 나은 앱을 만드는 데 도움이 됩니다.
+
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: ✨ 기능 설명
+      description: 제안하고 싶은 기능에 대해 자세히 설명해주세요
+      placeholder: "예: 라운딩 중 실시간 GPS 추적으로 정확한 거리 측정 기능"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem-solution
+    attributes:
+      label: 💡 문제점과 해결책
+      description: 현재 어떤 문제가 있고, 이 기능이 어떻게 도움이 될지 설명해주세요
+      placeholder: "현재 거리를 수동으로 입력해야 하는데, 자동으로 측정되면 더 편리할 것 같습니다"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: feature-category
+    attributes:
+      label: 📂 기능 카테고리
+      description: 이 기능이 속하는 카테고리를 선택해주세요
+      options:
+        - 라운딩 관리
+        - 스코어 추적
+        - 그룹 관리
+        - 채팅 시스템
+        - AI 인사이트
+        - GPS/지도
+        - 사용자 인터페이스
+        - 성능 최적화
+        - 기타
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 🔥 우선순위
+      description: 이 기능의 중요도를 평가해주세요
+      options:
+        - 높음 (필수 기능)
+        - 중간 (있으면 좋은 기능)
+        - 낮음 (추가 기능)
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-cases
+    attributes:
+      label: 📋 사용 사례
+      description: 이 기능을 언제, 어떻게 사용하게 될지 구체적인 시나리오를 작성해주세요
+      placeholder: |
+        1. 라운딩 시작 시 GPS 자동 활성화
+        2. 홀별로 자동 거리 측정
+        3. 클럽 선택 시 추천 거리 표시
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternative-solutions
+    attributes:
+      label: 🔄 대안
+      description: 이 기능 외에 다른 해결 방법이 있다면 알려주세요 (선택사항)
+      placeholder: "수동 입력을 더 간편하게 만들거나, 음성 입력 기능 등"
+
+  - type: checkboxes
+    id: additional-info
+    attributes:
+      label: ✅ 추가 정보
+      description: 해당하는 항목을 체크해주세요
+      options:
+        - label: 이 기능이 다른 사용자에게도 유용할 것 같습니다
+          required: false
+        - label: 유사한 기능을 다른 골프 앱에서 본 적이 있습니다
+          required: false
+        - label: 이 기능 개발에 참여하고 싶습니다
+          required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ## 🤝 기여하고 싶으신가요?
+        
+        - 💻 [코드 기여](https://github.com/viakisun/MTCN/blob/main/README.md#-기여하기)
+        - 🎨 [디자인 제안](https://github.com/viakisun/MTCN/discussions)
+        - 📝 [문서 개선](https://github.com/viakisun/MTCN/issues)
+        
+        ## 📞 다른 도움이 필요하신가요?
+        
+        - 🐛 [버그 신고](https://github.com/viakisun/MTCN/issues/new?template=bug_report.yml)
+        - 💬 [토론 참여](https://github.com/viakisun/MTCN/discussions)
+        - 📖 [빠른 시작 가이드](https://github.com/viakisun/MTCN/blob/main/QUICK_START.md)
