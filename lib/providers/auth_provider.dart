@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/player.dart';
+import '../data/models/player.dart';
 import '../services/auth_service.dart';
 
 /// AuthService Provider

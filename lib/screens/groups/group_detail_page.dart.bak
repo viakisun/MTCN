@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/theme/design_tokens.dart';
-import '../../models/group.dart';
-import '../../models/player.dart';
+import '../../data/models/group.dart';
+import '../../data/models/player.dart';
 import '../../widgets/common/avatar.dart';
 import '../../services/group_member_service.dart';
-import '../../services/chat_service.dart';
+import '../../services/chat_service_new.dart';
 import '../../data/mock/mock_players.dart';
 import '../../providers/auth_provider.dart';
 import 'member_list_page.dart';
@@ -148,16 +148,8 @@ class GroupDetailPage extends ConsumerWidget {
                         child: ElevatedButton.icon(
                           onPressed: () {
                             // 그룹 채팅 초기화
-                            ChatService.instance.initializeGroupChat(
+                            ChatServiceNew.instance.initializeGroupChat(
                               group.id,
-                              group.name,
-                              [
-                                MockPlayers.currentUser,
-                                MockPlayers.findById('2'), // 이영희
-                                MockPlayers.findById('3'), // 박철수
-                                MockPlayers.findById('4'), // 정수진
-                                MockPlayers.findById('5'), // 최동현
-                              ],
                             );
 
                             // 그룹 채팅 페이지로 이동

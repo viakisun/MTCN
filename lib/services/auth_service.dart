@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import '../models/player.dart';
+import '../data/models/player.dart';
 
 /// 인증 결과를 나타내는 클래스
 class AuthResult {

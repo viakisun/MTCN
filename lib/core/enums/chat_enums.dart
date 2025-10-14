@@ -149,3 +149,35 @@ enum ReactionType {
     }
   }
 }
+
+/// 메시지 반응
+class MessageReaction {
+  final String emoji;
+  final List<String> userIds;
+
+  const MessageReaction({required this.emoji, required this.userIds});
+
+  Map<String, dynamic> toJson() {
+    return {'emoji': emoji, 'userIds': userIds};
+  }
+
+  factory MessageReaction.fromJson(Map<String, dynamic> json) {
+    return MessageReaction(
+      emoji: json['emoji'] as String,
+      userIds: List<String>.from(json['userIds'] as List),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is MessageReaction &&
+        other.emoji == emoji &&
+        other.userIds.length == userIds.length;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(emoji, userIds.length);
+  }
+}

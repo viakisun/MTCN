@@ -5,7 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/theme/design_tokens.dart';
 import '../../providers/mock_data_provider.dart';
 import '../../widgets/cards/score_card.dart';
-import '../../widgets/cards/group_card.dart';
+// import '../../widgets/cards/group_card.dart'; // 임시로 주석 처리
 import '../../widgets/common/avatar.dart';
 import '../../widgets/common/player_detail_sheet.dart';
 import '../../widgets/common/achievement_celebration.dart';
@@ -729,10 +729,25 @@ class _HomePageState extends ConsumerState<HomePage> {
           final group = entry.value;
           return Padding(
             padding: const EdgeInsets.only(bottom: DesignTokens.spacing3),
-            child: GroupCard(group: group)
-                .animate()
-                .fadeIn(duration: 500.ms, delay: (index * 100).ms)
-                .slideY(begin: 0.2, end: 0),
+            child:
+                Container(
+                      padding: EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.1),
+                            blurRadius: 2,
+                            offset: Offset(0, 1),
+                          ),
+                        ],
+                      ),
+                      child: Text('그룹: ${group.name}'),
+                    ) // GroupCard(group: group)
+                    .animate()
+                    .fadeIn(duration: 500.ms, delay: (index * 100).ms)
+                    .slideY(begin: 0.2, end: 0),
           );
         }),
       ],

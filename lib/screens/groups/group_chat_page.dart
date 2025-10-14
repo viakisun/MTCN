@@ -1,14 +1,13 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
 import '../../core/theme/design_tokens.dart';
-import '../../models/group.dart';
-import '../../models/chat_message.dart';
+import '../../data/models/group.dart';
+import '../../data/models/chat_message.dart';
 import '../../widgets/common/avatar.dart';
-import '../../providers/chat_provider.dart';
+import '../../providers/chat_provider_new.dart';
 import '../../providers/auth_provider.dart';
 
 class GroupChatPage extends ConsumerStatefulWidget {
@@ -39,15 +38,14 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
     final currentUser = ref.read(currentUserProvider);
     if (currentUser == null) return;
 
-    final chatNotifier = ref.read(chatProvider(widget.group.id).notifier);
-    final success = await chatNotifier.sendMessage(
-      sender: currentUser,
+    final chatNotifier = ref.read(chatStateProvider.notifier);
+    await chatNotifier.sendMessage(
+      groupId: widget.group.id,
       content: content,
+      sender: currentUser,
     );
 
-    if (success) {
-      _messageController.clear();
-    }
+    _messageController.clear();
   }
 
   Future<void> _pickAndSendImage() async {
@@ -59,10 +57,11 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
     final currentUser = ref.read(currentUserProvider);
     if (currentUser == null) return;
 
-    final chatNotifier = ref.read(chatProvider(widget.group.id).notifier);
+    final chatNotifier = ref.read(chatStateProvider.notifier);
     await chatNotifier.sendImageMessage(
+      groupId: widget.group.id,
+      imageUrl: pickedFile.path,
       sender: currentUser,
-      imageFile: File(pickedFile.path),
     );
   }
 
@@ -74,10 +73,11 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
     final currentUser = ref.read(currentUserProvider);
     if (currentUser == null) return;
 
-    final chatNotifier = ref.read(chatProvider(widget.group.id).notifier);
+    final chatNotifier = ref.read(chatStateProvider.notifier);
     await chatNotifier.sendFileMessage(
+      groupId: widget.group.id,
+      fileName: result.files.single.name,
       sender: currentUser,
-      file: File(result.files.single.path!),
     );
   }
 
@@ -159,13 +159,11 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
                 return GestureDetector(
                   onTap: () async {
                     Navigator.pop(context);
-                    final chatNotifier = ref.read(
-                      chatProvider(widget.group.id).notifier,
-                    );
+                    final chatNotifier = ref.read(chatStateProvider.notifier);
                     await chatNotifier.toggleReaction(
                       messageId: message.id,
-                      userId: currentUser.id,
                       emoji: emoji,
+                      player: currentUser,
                     );
                   },
                   child: Container(
@@ -193,7 +191,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    final chatState = ref.watch(chatProvider(widget.group.id));
+    final chatState = ref.watch(chatStateProvider);
     final currentUser = ref.watch(currentUserProvider);
 
     return Scaffold(
@@ -351,7 +349,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '답장: ${chatState.replyingTo!.sender.name}',
+                              '답장: ${chatState.replyingTo!.senderName}',
                               style: const TextStyle(
                                 fontSize: DesignTokens.fontXs,
                                 fontWeight: DesignTokens.fontSemibold,
@@ -373,9 +371,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
                       IconButton(
                         icon: const Icon(Icons.close, size: 20),
                         onPressed: () {
-                          ref
-                              .read(chatProvider(widget.group.id).notifier)
-                              .cancelReply();
+                          ref.read(chatStateProvider.notifier).cancelReply();
                         },
                       ),
                     ],
@@ -393,7 +389,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
                         itemCount: chatState.messages.length,
                         itemBuilder: (context, index) {
                           final message = chatState.messages[index];
-                          final isMe = currentUser?.id == message.sender.id;
+                          final isMe = currentUser?.id == message.senderId;
 
                           return _buildChatMessage(
                             message: message,
@@ -559,8 +555,8 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
             children: [
               if (!isMe) ...[
                 Avatar(
-                  imageUrl: message.sender.avatar,
-                  name: message.sender.name,
+                  imageUrl: message.senderAvatarUrl,
+                  name: message.senderName,
                   size: AvatarSize.small,
                 ),
                 const SizedBox(width: DesignTokens.spacing2),
@@ -576,7 +572,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            message.sender.name,
+                            message.senderName,
                             style: const TextStyle(
                               fontSize: DesignTokens.fontXs,
                               fontWeight: DesignTokens.fontSemibold,
@@ -640,7 +636,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    message.replyToMessage!.sender.name,
+                                    message.replyToMessage!.senderName,
                                     style: TextStyle(
                                       fontSize: DesignTokens.fontXs,
                                       fontWeight: DesignTokens.fontSemibold,
@@ -667,76 +663,8 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
                             ),
                           ],
 
-                          // Attachments (images/files)
-                          if (message.attachments.isNotEmpty) ...[
-                            ...message.attachments.map((attachment) {
-                              if (attachment.fileType == 'image') {
-                                return Container(
-                                  margin: const EdgeInsets.only(
-                                    bottom: DesignTokens.spacing2,
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(
-                                      DesignTokens.radiusMd,
-                                    ),
-                                    child: Image.network(
-                                      attachment.url,
-                                      width: 200,
-                                      fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) =>
-                                              Container(
-                                                width: 200,
-                                                height: 150,
-                                                color: DesignTokens.neutral100,
-                                                child: const Icon(
-                                                  Icons.broken_image,
-                                                ),
-                                              ),
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                return Container(
-                                  margin: const EdgeInsets.only(
-                                    bottom: DesignTokens.spacing2,
-                                  ),
-                                  padding: const EdgeInsets.all(
-                                    DesignTokens.spacing2,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: isMe
-                                        ? Colors.white.withValues(alpha: 0.2)
-                                        : DesignTokens.neutral50,
-                                    borderRadius: BorderRadius.circular(
-                                      DesignTokens.radiusMd,
-                                    ),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(
-                                        Icons.insert_drive_file,
-                                        size: 20,
-                                      ),
-                                      const SizedBox(
-                                        width: DesignTokens.spacing2,
-                                      ),
-                                      Text(
-                                        attachment.fileName,
-                                        style: TextStyle(
-                                          fontSize: DesignTokens.fontXs,
-                                          color: isMe
-                                              ? DesignTokens.neutral0
-                                              : DesignTokens.textPrimary,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }
-                            }),
-                          ],
+                          // Attachments (images/files) - 임시로 비활성화
+                          // TODO: attachment 필드 구조 개선 후 활성화
 
                           // Message content
                           if (message.content.isNotEmpty)
@@ -779,13 +707,16 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
                       child: InkWell(
                         onTap: () async {
                           final chatNotifier = ref.read(
-                            chatProvider(widget.group.id).notifier,
+                            chatStateProvider.notifier,
                           );
-                          await chatNotifier.toggleReaction(
-                            messageId: message.id,
-                            userId: currentUserId,
-                            emoji: reaction.emoji,
-                          );
+                          final currentUser = ref.read(currentUserProvider);
+                          if (currentUser != null) {
+                            await chatNotifier.toggleReaction(
+                              messageId: message.id,
+                              emoji: reaction.emoji,
+                              player: currentUser,
+                            );
+                          }
                         },
                         borderRadius: BorderRadius.circular(
                           DesignTokens.radiusMd,
@@ -846,9 +777,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
                 // Reply button
                 InkWell(
                   onTap: () {
-                    ref
-                        .read(chatProvider(widget.group.id).notifier)
-                        .setReplyingTo(message);
+                    ref.read(chatStateProvider.notifier).setReplyingTo(message);
                   },
                   borderRadius: BorderRadius.circular(DesignTokens.radiusMd),
                   child: Container(

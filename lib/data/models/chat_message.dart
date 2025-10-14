@@ -12,6 +12,11 @@ class ChatMessage {
   final MessageType type;
   final String? replyToId;
 
+  // 추가 필드들 (UI 호환성을 위해)
+  final List<String> attachments;
+  final List<MessageReaction> reactions;
+  final ChatMessage? replyToMessage;
+
   const ChatMessage({
     required this.id,
     required this.groupId,
@@ -22,6 +27,9 @@ class ChatMessage {
     required this.timestamp,
     required this.type,
     this.replyToId,
+    this.attachments = const [],
+    this.reactions = const [],
+    this.replyToMessage,
   });
 
   ChatMessage copyWith({
@@ -34,6 +42,9 @@ class ChatMessage {
     DateTime? timestamp,
     MessageType? type,
     String? replyToId,
+    List<String>? attachments,
+    List<MessageReaction>? reactions,
+    ChatMessage? replyToMessage,
   }) {
     return ChatMessage(
       id: id ?? this.id,
@@ -45,6 +56,9 @@ class ChatMessage {
       timestamp: timestamp ?? this.timestamp,
       type: type ?? this.type,
       replyToId: replyToId ?? this.replyToId,
+      attachments: attachments ?? this.attachments,
+      reactions: reactions ?? this.reactions,
+      replyToMessage: replyToMessage ?? this.replyToMessage,
     );
   }
 

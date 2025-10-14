@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/theme/design_tokens.dart';
 import '../../providers/filter_provider.dart';
-import '../../widgets/cards/group_card.dart';
+// import '../../widgets/cards/group_card.dart'; // 임시로 주석 처리
 import 'create_group_page.dart';
 
 class GroupsPage extends ConsumerWidget {
@@ -154,7 +154,22 @@ class GroupsPage extends ConsumerWidget {
                       ),
                       itemCount: groups.length,
                       itemBuilder: (context, index) {
-                        return GroupCard(group: groups[index])
+                        return Container(
+                              padding: EdgeInsets.all(16),
+                              margin: EdgeInsets.symmetric(vertical: 8),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.1),
+                                    blurRadius: 4,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Text('그룹: ${groups[index].name}'),
+                            ) // GroupCard(group: groups[index])
                             .animate()
                             .fadeIn(duration: 500.ms, delay: (index * 50).ms)
                             .slideY(begin: 0.1, end: 0);

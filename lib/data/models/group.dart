@@ -11,6 +11,7 @@ class Group {
   final GroupStatus status;
   final List<GroupMember> members;
   final DateTime createdAt;
+  final int roundCount; // 추가 필드
 
   const Group({
     required this.id,
@@ -20,6 +21,7 @@ class Group {
     required this.status,
     required this.members,
     required this.createdAt,
+    required this.roundCount,
     this.avatarUrl,
   });
 
@@ -32,6 +34,7 @@ class Group {
     GroupStatus? status,
     List<GroupMember>? members,
     DateTime? createdAt,
+    int? roundCount,
   }) {
     return Group(
       id: id ?? this.id,
@@ -42,6 +45,7 @@ class Group {
       status: status ?? this.status,
       members: members ?? this.members,
       createdAt: createdAt ?? this.createdAt,
+      roundCount: roundCount ?? this.roundCount,
     );
   }
 
@@ -55,6 +59,7 @@ class Group {
       'status': status.apiValue,
       'members': members.map((member) => member.toJson()).toList(),
       'createdAt': createdAt.toIso8601String(),
+      'roundCount': roundCount,
     };
   }
 
@@ -70,6 +75,7 @@ class Group {
           .map((m) => GroupMember.fromJson(m as Map<String, dynamic>))
           .toList(),
       createdAt: DateTime.parse(json['createdAt'] as String),
+      roundCount: json['roundCount'] as int? ?? 0,
     );
   }
 

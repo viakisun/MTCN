@@ -10,20 +10,21 @@ import 'screens/rounding/rounding_page.dart';
 import 'screens/groups/groups_page.dart';
 import 'screens/score/score_page.dart';
 import 'screens/profile/profile_page.dart';
-import 'services/chat_service.dart';
-import 'data/mock/mock_players.dart';
+import 'screens/test/data_test_page.dart';
+import 'services/chat_service_new.dart';
+import 'data/services/mock_database_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('ko_KR', null);
 
   // 라이브 라운딩 채팅 초기화 (Rounding ID: '2')
-  ChatService.instance.initializeLiveRoundingChat('2', [
-    MockPlayers.currentUser, // 김민수
-    MockPlayers.findById('2'), // 이영희
-    MockPlayers.findById('3'), // 박철수
-    MockPlayers.findById('5'), // 최동현
-  ]);
+  final mockDb = MockDatabaseService();
+  final players = await mockDb.getPlayers();
+  ChatServiceNew.instance.initializeLiveRoundingChat(
+    '2',
+    players.take(4).toList(),
+  );
 
   // 그룹 채팅 초기화 - 데모용으로 일부 그룹 ID를 미리 초기화
   // 실제로는 MockDataService에서 생성된 그룹 ID를 사용해야 하지만,
@@ -91,6 +92,7 @@ class MainNavigator extends ConsumerWidget {
       GroupsPage(),
       ScorePage(),
       ProfilePage(),
+      DataTestPage(),
     ];
 
     return Scaffold(
@@ -187,6 +189,17 @@ class MainNavigator extends ConsumerWidget {
                   child: Icon(Icons.person, size: 24),
                 ),
                 label: '프로필',
+              ),
+              BottomNavigationBarItem(
+                icon: Padding(
+                  padding: EdgeInsets.only(bottom: 4),
+                  child: Icon(Icons.data_usage_outlined, size: 24),
+                ),
+                activeIcon: Padding(
+                  padding: EdgeInsets.only(bottom: 4),
+                  child: Icon(Icons.data_usage, size: 24),
+                ),
+                label: '테스트',
               ),
             ],
           ),

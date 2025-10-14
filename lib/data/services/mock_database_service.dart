@@ -154,6 +154,7 @@ class MockDatabaseService implements IDatabaseService {
         description: '서울 지역 골프 클럽',
         isPublic: true,
         status: GroupStatus.active,
+        roundCount: 15, // 추가
         members: [
           GroupMember(
             id: 'member_1',

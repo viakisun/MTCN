@@ -89,6 +89,7 @@ class GroupListNotifier extends StateNotifier<GroupListState> {
         avatarUrl: avatarUrl,
         isPublic: isPublic,
         status: GroupStatus.active,
+        roundCount: 0, // 새 그룹은 0부터 시작
         members: [], // 멤버는 별도로 추가
         createdAt: DateTime.now(),
       );

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/theme/design_tokens.dart';
-import '../../models/player.dart';
+import '../../data/models/player.dart';
 import '../../widgets/live/cheer_chat_widget.dart';
 import '../../widgets/live/gps_tracking_map_widget.dart';
 import '../../providers/auth_provider.dart';

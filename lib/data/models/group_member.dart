@@ -15,6 +15,10 @@ class GroupMember {
   final bool isActive;
   final Player player; // Added player field
 
+  // 편의 getter들
+  String get name => player.name;
+  String get avatar => player.avatar;
+
   const GroupMember({
     required this.id,
     required this.groupId,

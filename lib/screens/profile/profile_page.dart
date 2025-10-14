@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/theme/design_tokens.dart';
+import '../../core/utils/app_version.dart';
 import '../../widgets/common/avatar.dart';
 import 'profile_settings_page.dart';
 
@@ -238,13 +239,7 @@ class ProfilePage extends ConsumerWidget {
                               context,
                               icon: Icons.info_outline,
                               title: '앱 정보',
-                              onTap: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('앱 정보 기능은 준비중입니다'),
-                                  ),
-                                );
-                              },
+                              onTap: () => _showAppInfoDialog(context),
                             ),
                           ],
                         ),
@@ -375,6 +370,104 @@ class ProfilePage extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+
+  /// 앱 정보 다이얼로그 표시
+  void _showAppInfoDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(DesignTokens.radiusLg),
+          ),
+          title: Row(
+            children: [
+              const Icon(
+                Icons.info_outline,
+                color: DesignTokens.primary600,
+                size: 24,
+              ),
+              const SizedBox(width: DesignTokens.spacing2),
+              const Text(
+                '앱 정보',
+                style: TextStyle(
+                  fontSize: DesignTokens.fontLg,
+                  fontWeight: DesignTokens.fontSemibold,
+                ),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                '몇타치니 (MTCN)',
+                style: TextStyle(
+                  fontSize: DesignTokens.fontXl,
+                  fontWeight: DesignTokens.fontBold,
+                  color: DesignTokens.textPrimary,
+                ),
+              ),
+              const SizedBox(height: DesignTokens.spacing3),
+              const Text(
+                '골프 라운딩을 더 즐겁게 만드는\n스마트 골프 앱입니다.',
+                style: TextStyle(
+                  fontSize: DesignTokens.fontBase,
+                  color: DesignTokens.textSecondary,
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: DesignTokens.spacing4),
+              Container(
+                padding: const EdgeInsets.all(DesignTokens.spacing3),
+                decoration: BoxDecoration(
+                  color: DesignTokens.neutral50,
+                  borderRadius: BorderRadius.circular(DesignTokens.radiusMd),
+                  border: Border.all(color: DesignTokens.neutral200, width: 1),
+                ),
+                child: FutureBuilder<String>(
+                  future: AppVersion.getVersionString(),
+                  builder: (context, snapshot) {
+                    return Row(
+                      children: [
+                        const Icon(
+                          Icons.code,
+                          color: DesignTokens.textTertiary,
+                          size: 16,
+                        ),
+                        const SizedBox(width: DesignTokens.spacing2),
+                        Text(
+                          snapshot.data ?? 'v0.1.0+1',
+                          style: const TextStyle(
+                            fontSize: DesignTokens.fontSm,
+                            color: DesignTokens.textSecondary,
+                            fontWeight: DesignTokens.fontMedium,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text(
+                '확인',
+                style: TextStyle(
+                  color: DesignTokens.primary600,
+                  fontWeight: DesignTokens.fontSemibold,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
