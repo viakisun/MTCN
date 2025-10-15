@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/theme/design_tokens.dart';
 
 class CreateGroupPage extends ConsumerStatefulWidget {
@@ -127,7 +126,7 @@ class _CreateGroupPageState extends ConsumerState<CreateGroupPage> {
                     ),
                   ),
                 ),
-              ).animate().fadeIn(duration: 500.ms).scale(delay: 100.ms),
+              ),
 
               const SizedBox(height: DesignTokens.spacing6),
 
@@ -139,103 +138,85 @@ class _CreateGroupPageState extends ConsumerState<CreateGroupPage> {
                   fontWeight: DesignTokens.fontBold,
                   color: DesignTokens.textPrimary,
                 ),
-              ).animate().fadeIn(duration: 500.ms, delay: 150.ms),
+              ),
               const SizedBox(height: DesignTokens.spacing3),
 
               // Group Name
               TextFormField(
-                    controller: _nameController,
-                    decoration: InputDecoration(
-                      labelText: '그룹 이름',
-                      hintText: '예: 명지대 골프 동호회',
-                      prefixIcon: const Icon(
-                        Icons.group,
-                        color: DesignTokens.primary600,
-                      ),
-                      filled: true,
-                      fillColor: DesignTokens.neutral0,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          DesignTokens.radiusLg,
-                        ),
-                        borderSide: const BorderSide(
-                          color: DesignTokens.neutral200,
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          DesignTokens.radiusLg,
-                        ),
-                        borderSide: const BorderSide(
-                          color: DesignTokens.neutral200,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          DesignTokens.radiusLg,
-                        ),
-                        borderSide: const BorderSide(
-                          color: DesignTokens.primary600,
-                          width: 2,
-                        ),
-                      ),
+                controller: _nameController,
+                decoration: InputDecoration(
+                  labelText: '그룹 이름',
+                  hintText: '예: 명지대 골프 동호회',
+                  prefixIcon: const Icon(
+                    Icons.group,
+                    color: DesignTokens.primary600,
+                  ),
+                  filled: true,
+                  fillColor: DesignTokens.neutral0,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(DesignTokens.radiusLg),
+                    borderSide: const BorderSide(
+                      color: DesignTokens.neutral200,
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return '그룹 이름을 입력해주세요';
-                      }
-                      if (value.length < 2) {
-                        return '그룹 이름은 2자 이상이어야 합니다';
-                      }
-                      return null;
-                    },
-                  )
-                  .animate()
-                  .fadeIn(duration: 500.ms, delay: 200.ms)
-                  .slideY(begin: 0.2, end: 0),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(DesignTokens.radiusLg),
+                    borderSide: const BorderSide(
+                      color: DesignTokens.neutral200,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(DesignTokens.radiusLg),
+                    borderSide: const BorderSide(
+                      color: DesignTokens.primary600,
+                      width: 2,
+                    ),
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return '그룹 이름을 입력해주세요';
+                  }
+                  if (value.length < 2) {
+                    return '그룹 이름은 2자 이상이어야 합니다';
+                  }
+                  return null;
+                },
+              ),
 
               const SizedBox(height: DesignTokens.spacing4),
 
               // Group Description
               TextFormField(
-                    controller: _descriptionController,
-                    maxLines: 4,
-                    decoration: InputDecoration(
-                      labelText: '그룹 설명',
-                      hintText: '그룹에 대해 간단히 소개해주세요',
-                      alignLabelWithHint: true,
-                      filled: true,
-                      fillColor: DesignTokens.neutral0,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          DesignTokens.radiusLg,
-                        ),
-                        borderSide: const BorderSide(
-                          color: DesignTokens.neutral200,
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          DesignTokens.radiusLg,
-                        ),
-                        borderSide: const BorderSide(
-                          color: DesignTokens.neutral200,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          DesignTokens.radiusLg,
-                        ),
-                        borderSide: const BorderSide(
-                          color: DesignTokens.primary600,
-                          width: 2,
-                        ),
-                      ),
+                controller: _descriptionController,
+                maxLines: 4,
+                decoration: InputDecoration(
+                  labelText: '그룹 설명',
+                  hintText: '그룹에 대해 간단히 소개해주세요',
+                  alignLabelWithHint: true,
+                  filled: true,
+                  fillColor: DesignTokens.neutral0,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(DesignTokens.radiusLg),
+                    borderSide: const BorderSide(
+                      color: DesignTokens.neutral200,
                     ),
-                  )
-                  .animate()
-                  .fadeIn(duration: 500.ms, delay: 250.ms)
-                  .slideY(begin: 0.2, end: 0),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(DesignTokens.radiusLg),
+                    borderSide: const BorderSide(
+                      color: DesignTokens.neutral200,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(DesignTokens.radiusLg),
+                    borderSide: const BorderSide(
+                      color: DesignTokens.primary600,
+                      width: 2,
+                    ),
+                  ),
+                ),
+              ),
 
               const SizedBox(height: DesignTokens.spacing6),
 
@@ -247,7 +228,7 @@ class _CreateGroupPageState extends ConsumerState<CreateGroupPage> {
                   fontWeight: DesignTokens.fontBold,
                   color: DesignTokens.textPrimary,
                 ),
-              ).animate().fadeIn(duration: 500.ms, delay: 300.ms),
+              ),
               const SizedBox(height: DesignTokens.spacing3),
 
               Wrap(
@@ -263,7 +244,7 @@ class _CreateGroupPageState extends ConsumerState<CreateGroupPage> {
                     Icons.emoji_events,
                   ),
                 ],
-              ).animate().fadeIn(duration: 500.ms, delay: 350.ms),
+              ),
 
               const SizedBox(height: DesignTokens.spacing6),
 
@@ -275,41 +256,33 @@ class _CreateGroupPageState extends ConsumerState<CreateGroupPage> {
                   fontWeight: DesignTokens.fontBold,
                   color: DesignTokens.textPrimary,
                 ),
-              ).animate().fadeIn(duration: 500.ms, delay: 400.ms),
+              ),
               const SizedBox(height: DesignTokens.spacing3),
 
               Container(
-                    decoration: BoxDecoration(
-                      color: DesignTokens.neutral0,
-                      borderRadius: BorderRadius.circular(
-                        DesignTokens.radiusXl,
-                      ),
-                      border: Border.all(color: DesignTokens.neutral200),
+                decoration: BoxDecoration(
+                  color: DesignTokens.neutral0,
+                  borderRadius: BorderRadius.circular(DesignTokens.radiusXl),
+                  border: Border.all(color: DesignTokens.neutral200),
+                ),
+                child: Column(
+                  children: [
+                    _buildPrivacyOption(
+                      '공개',
+                      '누구나 그룹을 찾고 가입 신청할 수 있습니다',
+                      'public',
+                      Icons.public,
                     ),
-                    child: Column(
-                      children: [
-                        _buildPrivacyOption(
-                          '공개',
-                          '누구나 그룹을 찾고 가입 신청할 수 있습니다',
-                          'public',
-                          Icons.public,
-                        ),
-                        const Divider(
-                          height: 1,
-                          color: DesignTokens.neutral200,
-                        ),
-                        _buildPrivacyOption(
-                          '비공개',
-                          '초대받은 사람만 그룹에 가입할 수 있습니다',
-                          'private',
-                          Icons.lock,
-                        ),
-                      ],
+                    const Divider(height: 1, color: DesignTokens.neutral200),
+                    _buildPrivacyOption(
+                      '비공개',
+                      '초대받은 사람만 그룹에 가입할 수 있습니다',
+                      'private',
+                      Icons.lock,
                     ),
-                  )
-                  .animate()
-                  .fadeIn(duration: 500.ms, delay: 450.ms)
-                  .slideY(begin: 0.2, end: 0),
+                  ],
+                ),
+              ),
 
               const SizedBox(height: DesignTokens.spacing6),
 
@@ -321,99 +294,81 @@ class _CreateGroupPageState extends ConsumerState<CreateGroupPage> {
                   fontWeight: DesignTokens.fontBold,
                   color: DesignTokens.textPrimary,
                 ),
-              ).animate().fadeIn(duration: 500.ms, delay: 500.ms),
+              ),
               const SizedBox(height: DesignTokens.spacing3),
 
               Container(
-                    decoration: BoxDecoration(
-                      color: DesignTokens.neutral0,
-                      borderRadius: BorderRadius.circular(
-                        DesignTokens.radiusXl,
-                      ),
-                      border: Border.all(color: DesignTokens.neutral200),
+                decoration: BoxDecoration(
+                  color: DesignTokens.neutral0,
+                  borderRadius: BorderRadius.circular(DesignTokens.radiusXl),
+                  border: Border.all(color: DesignTokens.neutral200),
+                ),
+                child: Column(
+                  children: [
+                    _buildSettingSwitch(
+                      '자동 승인',
+                      '가입 신청을 자동으로 승인합니다',
+                      _autoApproval,
+                      (value) => setState(() => _autoApproval = value),
+                      Icons.check_circle,
                     ),
-                    child: Column(
-                      children: [
-                        _buildSettingSwitch(
-                          '자동 승인',
-                          '가입 신청을 자동으로 승인합니다',
-                          _autoApproval,
-                          (value) => setState(() => _autoApproval = value),
-                          Icons.check_circle,
-                        ),
-                        const Divider(
-                          height: 1,
-                          color: DesignTokens.neutral200,
-                        ),
-                        _buildSettingSwitch(
-                          '멤버 초대 허용',
-                          '모든 멤버가 새로운 사람을 초대할 수 있습니다',
-                          _allowMemberInvite,
-                          (value) => setState(() => _allowMemberInvite = value),
-                          Icons.person_add,
-                        ),
-                        const Divider(
-                          height: 1,
-                          color: DesignTokens.neutral200,
-                        ),
-                        _buildSettingSwitch(
-                          '채팅 활성화',
-                          '그룹 채팅방을 사용할 수 있습니다',
-                          _enableChat,
-                          (value) => setState(() => _enableChat = value),
-                          Icons.chat,
-                        ),
-                        const Divider(
-                          height: 1,
-                          color: DesignTokens.neutral200,
-                        ),
-                        _buildSettingSwitch(
-                          '알림 활성화',
-                          '그룹 활동에 대한 알림을 받습니다',
-                          _enableNotifications,
-                          (value) =>
-                              setState(() => _enableNotifications = value),
-                          Icons.notifications,
-                        ),
-                      ],
+                    const Divider(height: 1, color: DesignTokens.neutral200),
+                    _buildSettingSwitch(
+                      '멤버 초대 허용',
+                      '모든 멤버가 새로운 사람을 초대할 수 있습니다',
+                      _allowMemberInvite,
+                      (value) => setState(() => _allowMemberInvite = value),
+                      Icons.person_add,
                     ),
-                  )
-                  .animate()
-                  .fadeIn(duration: 500.ms, delay: 550.ms)
-                  .slideY(begin: 0.2, end: 0),
+                    const Divider(height: 1, color: DesignTokens.neutral200),
+                    _buildSettingSwitch(
+                      '채팅 활성화',
+                      '그룹 채팅방을 사용할 수 있습니다',
+                      _enableChat,
+                      (value) => setState(() => _enableChat = value),
+                      Icons.chat,
+                    ),
+                    const Divider(height: 1, color: DesignTokens.neutral200),
+                    _buildSettingSwitch(
+                      '알림 활성화',
+                      '그룹 활동에 대한 알림을 받습니다',
+                      _enableNotifications,
+                      (value) => setState(() => _enableNotifications = value),
+                      Icons.notifications,
+                    ),
+                  ],
+                ),
+              ),
 
               const SizedBox(height: DesignTokens.spacing6),
 
               // Create Button
               SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: _createGroup,
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: DesignTokens.spacing4,
-                        ),
-                        backgroundColor: DesignTokens.primary600,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                            DesignTokens.radiusLg,
-                          ),
-                        ),
-                        elevation: 0,
-                      ),
-                      child: const Text(
-                        '그룹 만들기',
-                        style: TextStyle(
-                          fontSize: DesignTokens.fontBase,
-                          fontWeight: DesignTokens.fontBold,
-                          color: DesignTokens.neutral0,
-                        ),
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _createGroup,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: DesignTokens.spacing4,
+                    ),
+                    backgroundColor: DesignTokens.primary600,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                        DesignTokens.radiusLg,
                       ),
                     ),
-                  )
-                  .animate()
-                  .fadeIn(duration: 500.ms, delay: 600.ms)
-                  .slideY(begin: 0.2, end: 0),
+                    elevation: 0,
+                  ),
+                  child: const Text(
+                    '그룹 만들기',
+                    style: TextStyle(
+                      fontSize: DesignTokens.fontBase,
+                      fontWeight: DesignTokens.fontBold,
+                      color: DesignTokens.neutral0,
+                    ),
+                  ),
+                ),
+              ),
 
               const SizedBox(height: DesignTokens.spacing4),
             ],

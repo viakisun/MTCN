@@ -48,18 +48,11 @@ class ProfilePage extends ConsumerWidget {
                 children: [
                   const SizedBox(height: DesignTokens.spacing6),
                   const Avatar(
-                        imageUrl:
-                            'https://via.placeholder.com/150/4F46E5/FFFFFF?text=김',
-                        name: '김민수',
-                        size: AvatarSize.large,
-                        showBorder: true,
-                      )
-                      .animate()
-                      .fadeIn(duration: 500.ms)
-                      .scale(
-                        begin: const Offset(0.8, 0.8),
-                        end: const Offset(1, 1),
-                      ),
+                    imageUrl: 'https://picsum.photos/150/150?random=1',
+                    name: '김민수',
+                    size: AvatarSize.large,
+                    showBorder: true,
+                  ),
                   const SizedBox(height: DesignTokens.spacing3),
                   const Text(
                     '김민수',
@@ -68,7 +61,7 @@ class ProfilePage extends ConsumerWidget {
                       fontWeight: DesignTokens.fontBold,
                       color: DesignTokens.neutral0,
                     ),
-                  ).animate().fadeIn(duration: 500.ms, delay: 100.ms),
+                  ),
                   const SizedBox(height: DesignTokens.spacing1),
                   const Text(
                     'member@mtcn.golf',
@@ -76,7 +69,7 @@ class ProfilePage extends ConsumerWidget {
                       fontSize: DesignTokens.fontBase,
                       color: DesignTokens.neutral0,
                     ),
-                  ).animate().fadeIn(duration: 500.ms, delay: 200.ms),
+                  ),
                   const SizedBox(height: DesignTokens.spacing6),
                 ],
               ),
@@ -283,7 +276,7 @@ class ProfilePage extends ConsumerWidget {
                     ),
                   ),
                 ),
-              ).animate().fadeIn(duration: 500.ms, delay: 800.ms),
+              ),
             ),
 
             const SizedBox(height: DesignTokens.spacing6),

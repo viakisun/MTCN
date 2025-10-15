@@ -771,9 +771,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           ],
         ),
         const SizedBox(height: DesignTokens.spacing3),
-        ScoreCard(
-          score: scoreRecord,
-        ).animate().fadeIn(duration: 500.ms).slideY(begin: 0.2, end: 0),
+        ScoreCard(score: scoreRecord),
       ],
     );
   }

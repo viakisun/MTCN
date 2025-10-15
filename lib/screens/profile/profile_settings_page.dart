@@ -71,8 +71,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                     Stack(
                       children: [
                         const Avatar(
-                          imageUrl:
-                              'https://via.placeholder.com/300/4F46E5/FFFFFF?text=김',
+                          imageUrl: 'https://picsum.photos/300/300?random=1',
                           name: '김철수',
                           size: AvatarSize.xxLarge,
                         ),

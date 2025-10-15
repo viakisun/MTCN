@@ -68,8 +68,7 @@ class MockDataService {
         averageScore: 75 + _faker.randomGenerator.integer(30),
         bestScore: 68 + _faker.randomGenerator.integer(20),
         handicap: _faker.randomGenerator.integer(36),
-        avatar:
-            'https://via.placeholder.com/150/4F46E5/FFFFFF?text=${Uri.encodeComponent(name.substring(0, 1))}',
+        avatar: 'https://picsum.photos/150/150?random=${index + 1}',
         isPlaying: _faker.randomGenerator.boolean(),
       );
     }).toList();
