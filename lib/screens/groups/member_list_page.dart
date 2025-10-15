@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/theme/design_tokens.dart';
-import '../../models/group.dart';
-import '../../models/player.dart';
+import '../../data/models/group.dart';
+import '../../data/models/group_member.dart';
 import '../../widgets/common/avatar.dart';
 import '../../widgets/common/badge.dart' as custom;
 
@@ -14,20 +14,20 @@ final memberSearchProvider = StateProvider<String>((ref) => '');
 final memberRoleFilterProvider = StateProvider<String>((ref) => 'all');
 
 // Provider for filtered members
-final filteredMembersProvider = Provider<List<Player>>((ref) {
+final filteredMembersProvider = Provider<List<GroupMember>>((ref) {
   // TODO: Replace with actual group members from provider
   final searchQuery = ref.watch(memberSearchProvider).toLowerCase();
   final roleFilter = ref.watch(memberRoleFilterProvider);
 
   // Mock data - replace with actual data
-  final List<Player> allMembers = [];
+  final List<GroupMember> allMembers = [];
 
   var filtered = allMembers;
 
   // Apply search filter
   if (searchQuery.isNotEmpty) {
     filtered = filtered.where((member) {
-      return member.name.toLowerCase().contains(searchQuery);
+      return member.player.name.toLowerCase().contains(searchQuery);
     }).toList();
   }
 
@@ -69,7 +69,7 @@ class _MemberListPageState extends ConsumerState<MemberListPage> {
     final filteredMembers = searchQuery.isEmpty
         ? members
         : members.where((member) {
-            return member.name.toLowerCase().contains(
+            return member.player.name.toLowerCase().contains(
               searchQuery.toLowerCase(),
             );
           }).toList();
@@ -267,7 +267,7 @@ class _MemberListPageState extends ConsumerState<MemberListPage> {
     );
   }
 
-  Widget _buildMemberCard(Player member, bool isAdmin) {
+  Widget _buildMemberCard(GroupMember member, bool isAdmin) {
     return Container(
       padding: const EdgeInsets.all(DesignTokens.spacing4),
       decoration: BoxDecoration(
@@ -279,8 +279,8 @@ class _MemberListPageState extends ConsumerState<MemberListPage> {
         children: [
           // Avatar
           Avatar(
-            imageUrl: member.avatar,
-            name: member.name,
+            imageUrl: member.player.avatar,
+            name: member.player.name,
             size: AvatarSize.medium,
           ),
           const SizedBox(width: DesignTokens.spacing3),
@@ -293,7 +293,7 @@ class _MemberListPageState extends ConsumerState<MemberListPage> {
                 Row(
                   children: [
                     Text(
-                      member.name,
+                      member.player.name,
                       style: const TextStyle(
                         fontSize: DesignTokens.fontBase,
                         fontWeight: DesignTokens.fontSemibold,
@@ -320,7 +320,7 @@ class _MemberListPageState extends ConsumerState<MemberListPage> {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      '평균 ${member.averageScore}타',
+                      '평균 ${member.player.averageScore}타',
                       style: const TextStyle(
                         fontSize: DesignTokens.fontXs,
                         color: DesignTokens.textSecondary,
@@ -334,7 +334,7 @@ class _MemberListPageState extends ConsumerState<MemberListPage> {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      '${member.bestScore}타',
+                      '${member.player.bestScore}타',
                       style: const TextStyle(
                         fontSize: DesignTokens.fontXs,
                         color: DesignTokens.textSecondary,
@@ -401,7 +401,11 @@ class _MemberListPageState extends ConsumerState<MemberListPage> {
     );
   }
 
-  void _showMemberOptions(BuildContext context, Player member, bool isAdmin) {
+  void _showMemberOptions(
+    BuildContext context,
+    GroupMember member,
+    bool isAdmin,
+  ) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -432,8 +436,8 @@ class _MemberListPageState extends ConsumerState<MemberListPage> {
               Row(
                 children: [
                   Avatar(
-                    imageUrl: member.avatar,
-                    name: member.name,
+                    imageUrl: member.player.avatar,
+                    name: member.player.name,
                     size: AvatarSize.medium,
                   ),
                   const SizedBox(width: DesignTokens.spacing3),
@@ -441,7 +445,7 @@ class _MemberListPageState extends ConsumerState<MemberListPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        member.name,
+                        member.player.name,
                         style: const TextStyle(
                           fontSize: DesignTokens.fontLg,
                           fontWeight: DesignTokens.fontBold,
@@ -449,7 +453,7 @@ class _MemberListPageState extends ConsumerState<MemberListPage> {
                         ),
                       ),
                       Text(
-                        '평균 ${member.averageScore}타',
+                        '평균 ${member.player.averageScore}타',
                         style: const TextStyle(
                           fontSize: DesignTokens.fontSm,
                           color: DesignTokens.textSecondary,
@@ -541,12 +545,12 @@ class _MemberListPageState extends ConsumerState<MemberListPage> {
     );
   }
 
-  void _showRemoveConfirmation(BuildContext context, Player member) {
+  void _showRemoveConfirmation(BuildContext context, GroupMember member) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('멤버 제거'),
-        content: Text('${member.name}님을 그룹에서 제거하시겠습니까?'),
+        content: Text('${member.player.name}님을 그룹에서 제거하시겠습니까?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -557,7 +561,7 @@ class _MemberListPageState extends ConsumerState<MemberListPage> {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('${member.name}님이 제거되었습니다'),
+                  content: Text('${member.player.name}님이 제거되었습니다'),
                   backgroundColor: DesignTokens.success,
                 ),
               );

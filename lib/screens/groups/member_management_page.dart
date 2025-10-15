@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/theme/design_tokens.dart';
-import '../../models/group.dart';
-import '../../models/player.dart';
-import '../../models/group_member.dart';
+import '../../data/models/group.dart';
+import '../../data/models/group_member.dart';
+import '../../core/enums/group_enums.dart' as group_enums;
 import '../../widgets/common/avatar.dart';
 import '../../widgets/common/badge.dart' as custom;
 import '../../services/group_member_service.dart';
@@ -226,7 +226,7 @@ class _MemberManagementPageState extends ConsumerState<MemberManagementPage>
     );
   }
 
-  Widget _buildMemberManagementCard(Player member, bool isAdmin) {
+  Widget _buildMemberManagementCard(GroupMember member, bool isAdmin) {
     return Container(
       padding: const EdgeInsets.all(DesignTokens.spacing4),
       decoration: BoxDecoration(
@@ -238,8 +238,8 @@ class _MemberManagementPageState extends ConsumerState<MemberManagementPage>
         children: [
           // Avatar
           Avatar(
-            imageUrl: member.avatar,
-            name: member.name,
+            imageUrl: member.player.avatar,
+            name: member.player.name,
             size: AvatarSize.large,
           ),
           const SizedBox(width: DesignTokens.spacing3),
@@ -252,7 +252,7 @@ class _MemberManagementPageState extends ConsumerState<MemberManagementPage>
                 Row(
                   children: [
                     Text(
-                      member.name,
+                      member.player.name,
                       style: const TextStyle(
                         fontSize: DesignTokens.fontLg,
                         fontWeight: DesignTokens.fontBold,
@@ -279,7 +279,7 @@ class _MemberManagementPageState extends ConsumerState<MemberManagementPage>
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      '평균 ${member.averageScore}타',
+                      '평균 ${member.player.averageScore}타',
                       style: const TextStyle(
                         fontSize: DesignTokens.fontSm,
                         color: DesignTokens.textSecondary,
@@ -293,7 +293,7 @@ class _MemberManagementPageState extends ConsumerState<MemberManagementPage>
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      '최고 ${member.bestScore}타',
+                      '최고 ${member.player.bestScore}타',
                       style: const TextStyle(
                         fontSize: DesignTokens.fontSm,
                         color: DesignTokens.textSecondary,
@@ -306,7 +306,7 @@ class _MemberManagementPageState extends ConsumerState<MemberManagementPage>
           ),
 
           // Role Dropdown
-          PopupMenuButton<MemberRole>(
+          PopupMenuButton<group_enums.MemberRole>(
             icon: Container(
               padding: const EdgeInsets.symmetric(
                 horizontal: DesignTokens.spacing3,
@@ -347,7 +347,7 @@ class _MemberManagementPageState extends ConsumerState<MemberManagementPage>
             ),
             itemBuilder: (context) => [
               PopupMenuItem(
-                value: MemberRole.admin,
+                value: group_enums.MemberRole.admin,
                 child: Row(
                   children: [
                     Icon(
@@ -378,7 +378,7 @@ class _MemberManagementPageState extends ConsumerState<MemberManagementPage>
                 ),
               ),
               PopupMenuItem(
-                value: MemberRole.member,
+                value: group_enums.MemberRole.member,
                 child: Row(
                   children: [
                     Icon(
@@ -558,40 +558,40 @@ class _MemberManagementPageState extends ConsumerState<MemberManagementPage>
   }
 
   Future<void> _changeRole(
-    Player member,
-    MemberRole newRole,
+    GroupMember member,
+    group_enums.MemberRole newRole,
     bool currentlyAdmin,
   ) async {
     final currentUser = ref.read(currentUserProvider);
     if (currentUser == null) return;
 
-    if ((newRole == MemberRole.admin && currentlyAdmin) ||
-        (newRole == MemberRole.member && !currentlyAdmin)) {
+    if ((newRole == group_enums.MemberRole.admin && currentlyAdmin) ||
+        (newRole == group_enums.MemberRole.member && !currentlyAdmin)) {
       return; // No change
     }
 
-    final serviceMemberRole = newRole == MemberRole.admin
-        ? MemberRole.admin
-        : MemberRole.member;
+    final serviceMemberRole = newRole == group_enums.MemberRole.admin
+        ? group_enums.MemberRole.admin
+        : group_enums.MemberRole.member;
     final success = await _memberService.changeMemberRole(
       groupId: widget.group.id,
-      memberId: member.id,
+      memberId: member.playerId,
       newRole: serviceMemberRole,
       changedBy: currentUser.id,
     );
 
     if (success && mounted) {
-      final roleText = newRole == MemberRole.admin ? '관리자' : '멤버';
+      final roleText = newRole == group_enums.MemberRole.admin ? '관리자' : '멤버';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('${member.name}님의 역할이 $roleText(으)로 변경되었습니다'),
+          content: Text('${member.player.name}님의 역할이 $roleText(으)로 변경되었습니다'),
           backgroundColor: DesignTokens.success,
         ),
       );
     }
   }
 
-  Future<void> _showRemoveConfirmation(Player member) async {
+  Future<void> _showRemoveConfirmation(GroupMember member) async {
     final currentUser = ref.read(currentUserProvider);
     if (currentUser == null) return;
 
@@ -599,7 +599,7 @@ class _MemberManagementPageState extends ConsumerState<MemberManagementPage>
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('멤버 제거'),
-        content: Text('${member.name}님을 그룹에서 제거하시겠습니까?'),
+        content: Text('${member.player.name}님을 그룹에서 제거하시겠습니까?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -626,7 +626,7 @@ class _MemberManagementPageState extends ConsumerState<MemberManagementPage>
       if (success && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('${member.name}님이 제거되었습니다'),
+            content: Text('${member.player.name}님이 제거되었습니다'),
             backgroundColor: DesignTokens.success,
           ),
         );

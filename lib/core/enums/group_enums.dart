@@ -161,6 +161,15 @@ enum InvitationStatus {
   }
 }
 
+/// 그룹 크기 등급
+enum GroupSizeTier {
+  mega, // 100+ members
+  large, // 50-99 members
+  medium, // 20-49 members
+  small, // 10-19 members
+  mini, // 0-9 members
+}
+
 /// 그룹 카테고리
 enum GroupCategory {
   golf('골프', 'golf'),

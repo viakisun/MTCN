@@ -1,7 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/player.dart';
+import '../data/models/player.dart';
 import '../models/rounding.dart';
-import '../models/group.dart';
+import '../data/models/group.dart';
+import '../core/enums/group_enums.dart';
 import '../models/score_record.dart';
 import '../services/mock_data_service.dart';
 import '../data/mock/mock_roundings.dart';

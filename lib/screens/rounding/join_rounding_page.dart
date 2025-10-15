@@ -4,7 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import '../../core/theme/design_tokens.dart';
 import '../../models/rounding.dart';
-import '../../models/player.dart';
+import '../../data/models/player.dart';
 
 /// 결제 방법
 enum PaymentMethod { card, transfer, cash }

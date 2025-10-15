@@ -10,6 +10,10 @@ class GroupMember {
   final MemberStatus status;
   final DateTime joinedAt;
   final DateTime? leftAt;
+  final DateTime? approvedAt;
+  final String? approvedBy;
+  final String? rejectedBy;
+  final String? rejectionReason;
   final String? nickname;
   final Map<String, dynamic>? permissions;
   final bool isActive;
@@ -28,6 +32,10 @@ class GroupMember {
     required this.joinedAt,
     required this.player, // Added to constructor
     this.leftAt,
+    this.approvedAt,
+    this.approvedBy,
+    this.rejectedBy,
+    this.rejectionReason,
     this.nickname,
     this.permissions,
     this.isActive = true,
@@ -41,6 +49,10 @@ class GroupMember {
     MemberStatus? status,
     DateTime? joinedAt,
     DateTime? leftAt,
+    DateTime? approvedAt,
+    String? approvedBy,
+    String? rejectedBy,
+    String? rejectionReason,
     String? nickname,
     Map<String, dynamic>? permissions,
     bool? isActive,
@@ -54,6 +66,10 @@ class GroupMember {
       status: status ?? this.status,
       joinedAt: joinedAt ?? this.joinedAt,
       leftAt: leftAt ?? this.leftAt,
+      approvedAt: approvedAt ?? this.approvedAt,
+      approvedBy: approvedBy ?? this.approvedBy,
+      rejectedBy: rejectedBy ?? this.rejectedBy,
+      rejectionReason: rejectionReason ?? this.rejectionReason,
       nickname: nickname ?? this.nickname,
       permissions: permissions ?? this.permissions,
       isActive: isActive ?? this.isActive,
@@ -70,6 +86,10 @@ class GroupMember {
       'status': status.apiValue,
       'joinedAt': joinedAt.toIso8601String(),
       'leftAt': leftAt?.toIso8601String(),
+      'approvedAt': approvedAt?.toIso8601String(),
+      'approvedBy': approvedBy,
+      'rejectedBy': rejectedBy,
+      'rejectionReason': rejectionReason,
       'nickname': nickname,
       'permissions': permissions,
       'isActive': isActive,
@@ -88,6 +108,12 @@ class GroupMember {
       leftAt: json['leftAt'] != null
           ? DateTime.parse(json['leftAt'] as String)
           : null,
+      approvedAt: json['approvedAt'] != null
+          ? DateTime.parse(json['approvedAt'] as String)
+          : null,
+      approvedBy: json['approvedBy'] as String?,
+      rejectedBy: json['rejectedBy'] as String?,
+      rejectionReason: json['rejectionReason'] as String?,
       nickname: json['nickname'] as String?,
       permissions: json['permissions'] as Map<String, dynamic>?,
       isActive: json['isActive'] as bool? ?? true,
@@ -106,6 +132,10 @@ class GroupMember {
         other.status == status &&
         other.joinedAt == joinedAt &&
         other.leftAt == leftAt &&
+        other.approvedAt == approvedAt &&
+        other.approvedBy == approvedBy &&
+        other.rejectedBy == rejectedBy &&
+        other.rejectionReason == rejectionReason &&
         other.nickname == nickname &&
         other.permissions == permissions &&
         other.isActive == isActive &&
@@ -122,6 +152,10 @@ class GroupMember {
       status,
       joinedAt,
       leftAt,
+      approvedAt,
+      approvedBy,
+      rejectedBy,
+      rejectionReason,
       nickname,
       permissions,
       isActive,
@@ -131,6 +165,6 @@ class GroupMember {
 
   @override
   String toString() {
-    return 'GroupMember(id: $id, groupId: $groupId, playerId: $playerId, role: $role, status: $status, joinedAt: $joinedAt, leftAt: $leftAt, nickname: $nickname, permissions: $permissions, isActive: $isActive, player: $player)';
+    return 'GroupMember(id: $id, groupId: $groupId, playerId: $playerId, role: $role, status: $status, joinedAt: $joinedAt, leftAt: $leftAt, approvedAt: $approvedAt, approvedBy: $approvedBy, rejectedBy: $rejectedBy, rejectionReason: $rejectionReason, nickname: $nickname, permissions: $permissions, isActive: $isActive, player: $player)';
   }
 }

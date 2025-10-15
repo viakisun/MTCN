@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
-import '../models/group_member.dart';
-import '../models/player.dart';
-import '../models/invitation.dart';
+import '../data/models/group_member.dart';
+import '../data/models/player.dart';
+import '../core/enums/group_enums.dart' as group_enums;
+import '../models/invitation.dart' as invitation_models;
 
 /// 그룹 멤버 서비스
 ///
@@ -15,12 +16,13 @@ class GroupMemberService {
   final Map<String, List<GroupMember>> _membersByGroup = {};
 
   // Mock 저장소: 초대 목록
-  final Map<String, List<Invitation>> _invitationsByGroup = {};
+  final Map<String, List<invitation_models.Invitation>> _invitationsByGroup =
+      {};
 
   /// 그룹 멤버 목록 조회
   Future<List<GroupMember>> getGroupMembers({
     required String groupId,
-    MemberStatus? status,
+    group_enums.MemberStatus? status,
   }) async {
     try {
       debugPrint('=== Get Group Members ===');
@@ -46,12 +48,18 @@ class GroupMemberService {
 
   /// 승인 대기 중인 멤버 조회
   Future<List<GroupMember>> getPendingMembers(String groupId) async {
-    return getGroupMembers(groupId: groupId, status: MemberStatus.pending);
+    return getGroupMembers(
+      groupId: groupId,
+      status: group_enums.MemberStatus.pending,
+    );
   }
 
   /// 활성 멤버 조회
   Future<List<GroupMember>> getActiveMembers(String groupId) async {
-    return getGroupMembers(groupId: groupId, status: MemberStatus.active);
+    return getGroupMembers(
+      groupId: groupId,
+      status: group_enums.MemberStatus.active,
+    );
   }
 
   /// 멤버 승인
@@ -76,14 +84,14 @@ class GroupMemberService {
       if (memberIndex == -1) return false;
 
       final member = members[memberIndex];
-      if (member.status != MemberStatus.pending) {
+      if (member.status != group_enums.MemberStatus.pending) {
         debugPrint('Member is not pending: ${member.status.name}');
         return false;
       }
 
       // 승인 처리
       members[memberIndex] = member.copyWith(
-        status: MemberStatus.active,
+        status: group_enums.MemberStatus.active,
         approvedAt: DateTime.now(),
         approvedBy: approverId,
       );
@@ -120,14 +128,14 @@ class GroupMemberService {
       if (memberIndex == -1) return false;
 
       final member = members[memberIndex];
-      if (member.status != MemberStatus.pending) {
+      if (member.status != group_enums.MemberStatus.pending) {
         debugPrint('Member is not pending: ${member.status.name}');
         return false;
       }
 
       // 거절 처리
       members[memberIndex] = member.copyWith(
-        status: MemberStatus.rejected,
+        status: group_enums.MemberStatus.rejected,
         rejectedBy: rejecterId,
         rejectionReason: reason,
       );
@@ -144,7 +152,7 @@ class GroupMemberService {
   Future<bool> changeMemberRole({
     required String groupId,
     required String memberId,
-    required MemberRole newRole,
+    required group_enums.MemberRole newRole,
     required String changedBy,
   }) async {
     try {
@@ -164,7 +172,7 @@ class GroupMemberService {
       if (memberIndex == -1) return false;
 
       final member = members[memberIndex];
-      if (member.status != MemberStatus.active) {
+      if (member.status != group_enums.MemberStatus.active) {
         debugPrint('Member is not active: ${member.status.name}');
         return false;
       }
@@ -236,7 +244,9 @@ class GroupMemberService {
       final member = members[memberIndex];
 
       // 차단 처리
-      members[memberIndex] = member.copyWith(status: MemberStatus.banned);
+      members[memberIndex] = member.copyWith(
+        status: group_enums.MemberStatus.banned,
+      );
 
       debugPrint('Member banned successfully');
       return true;
@@ -247,7 +257,7 @@ class GroupMemberService {
   }
 
   /// 멤버 초대
-  Future<Invitation?> inviteMember({
+  Future<invitation_models.Invitation?> inviteMember({
     required String groupId,
     required String groupName,
     required Player inviter,
@@ -264,13 +274,13 @@ class GroupMemberService {
       await Future.delayed(const Duration(milliseconds: 300));
 
       // 초대 생성
-      final invitation = Invitation(
+      final invitation = invitation_models.Invitation(
         id: 'inv_${DateTime.now().millisecondsSinceEpoch}',
         groupId: groupId,
         groupName: groupName,
         inviter: inviter,
         invitee: invitee,
-        status: InvitationStatus.pending,
+        status: invitation_models.InvitationStatus.pending,
         createdAt: DateTime.now(),
         expiresAt: DateTime.now().add(const Duration(days: 7)), // 7일 후 만료
         message: message,
@@ -300,13 +310,13 @@ class GroupMemberService {
       await Future.delayed(const Duration(milliseconds: 300));
 
       // 초대 찾기
-      Invitation? invitation;
+      invitation_models.Invitation? invitation;
       String? groupId;
 
       for (final entry in _invitationsByGroup.entries) {
         final inv = entry.value.firstWhere(
           (i) => i.id == invitationId,
-          orElse: () => Invitation(
+          orElse: () => invitation_models.Invitation(
             id: '',
             groupId: '',
             groupName: '',
@@ -330,7 +340,7 @@ class GroupMemberService {
               averageScore: 0,
               bestScore: 0,
             ),
-            status: InvitationStatus.pending,
+            status: invitation_models.InvitationStatus.pending,
             createdAt: DateTime.now(),
             expiresAt: DateTime.now(),
           ),
@@ -357,16 +367,18 @@ class GroupMemberService {
       final invitations = _invitationsByGroup[groupId]!;
       final invIndex = invitations.indexWhere((i) => i.id == invitationId);
       invitations[invIndex] = invitation.copyWith(
-        status: InvitationStatus.accepted,
+        status: invitation_models.InvitationStatus.accepted,
         respondedAt: DateTime.now(),
       );
 
       // 그룹에 멤버 추가
       final member = GroupMember(
         id: 'mem_${DateTime.now().millisecondsSinceEpoch}',
+        groupId: groupId,
+        playerId: invitation.invitee.id,
         player: invitation.invitee,
-        role: MemberRole.member,
-        status: MemberStatus.active,
+        role: group_enums.MemberRole.member,
+        status: group_enums.MemberStatus.active,
         joinedAt: DateTime.now(),
         approvedAt: DateTime.now(),
       );
@@ -407,7 +419,7 @@ class GroupMemberService {
           }
 
           invitations[invIndex] = invitation.copyWith(
-            status: InvitationStatus.declined,
+            status: invitation_models.InvitationStatus.declined,
             respondedAt: DateTime.now(),
           );
 
@@ -425,9 +437,9 @@ class GroupMemberService {
   }
 
   /// 사용자의 초대 목록 조회
-  Future<List<Invitation>> getUserInvitations({
+  Future<List<invitation_models.Invitation>> getUserInvitations({
     required String userId,
-    InvitationStatus? status,
+    invitation_models.InvitationStatus? status,
   }) async {
     try {
       debugPrint('=== Get User Invitations ===');

@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../core/theme/design_tokens.dart';
 import '../../models/rounding.dart';
-import '../../models/player.dart';
+import '../../data/models/player.dart';
 import '../../widgets/common/avatar.dart';
 
 class RoundReportPage extends ConsumerWidget {

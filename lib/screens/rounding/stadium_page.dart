@@ -4,7 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:async';
 import '../../core/theme/design_tokens.dart';
 import '../../models/rounding.dart';
-import '../../models/player.dart';
+import '../../data/models/player.dart';
 
 class LeaderboardEntry {
   final Player player;

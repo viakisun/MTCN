@@ -150,11 +150,13 @@ class MockDatabaseService implements IDatabaseService {
     final groups = [
       Group(
         id: 'group_1',
-        name: '서울 골프 클럽',
-        description: '서울 지역 골프 클럽',
+        name: '서울대 경영대 87학번 모임',
+        description: '서울대학교 경영대학 87학번 동문회입니다. 정기적인 골프 모임을 진행합니다.',
         isPublic: true,
+        isPremium: true,
         status: GroupStatus.active,
-        roundCount: 15, // 추가
+        roundCount: 15,
+        image: 'https://example.com/group1.jpg',
         members: [
           GroupMember(
             id: 'member_1',
@@ -176,6 +178,50 @@ class MockDatabaseService implements IDatabaseService {
           ),
         ],
         createdAt: DateTime.now().subtract(Duration(days: 30)),
+      ),
+      Group(
+        id: 'group_2',
+        name: '강남 CEO 골프클럽',
+        description: '강남 지역 CEO들의 프리미엄 골프 클럽입니다.',
+        isPublic: false,
+        isPremium: true,
+        status: GroupStatus.active,
+        roundCount: 8,
+        image: 'https://example.com/group2.jpg',
+        members: [
+          GroupMember(
+            id: 'member_3',
+            groupId: 'group_2',
+            playerId: 'player_3',
+            role: MemberRole.owner,
+            status: MemberStatus.active,
+            joinedAt: DateTime.now().subtract(Duration(days: 60)),
+            player: players[2],
+          ),
+        ],
+        createdAt: DateTime.now().subtract(Duration(days: 60)),
+      ),
+      Group(
+        id: 'group_3',
+        name: '연세대 의대 92학번 동문회',
+        description: '연세대학교 의과대학 92학번 동문회입니다.',
+        isPublic: true,
+        isPremium: false,
+        status: GroupStatus.active,
+        roundCount: 12,
+        image: 'https://example.com/group3.jpg',
+        members: [
+          GroupMember(
+            id: 'member_4',
+            groupId: 'group_3',
+            playerId: 'player_4',
+            role: MemberRole.admin,
+            status: MemberStatus.active,
+            joinedAt: DateTime.now().subtract(Duration(days: 45)),
+            player: players[3],
+          ),
+        ],
+        createdAt: DateTime.now().subtract(Duration(days: 45)),
       ),
     ];
 

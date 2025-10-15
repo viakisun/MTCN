@@ -1,4 +1,4 @@
-import '../../models/player.dart';
+import '../models/player.dart';
 
 /// Mock player data for development
 class MockPlayers {

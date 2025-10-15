@@ -5,7 +5,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'dart:async';
 import '../../core/theme/design_tokens.dart';
 import '../../models/rounding.dart';
-import '../../models/player.dart';
+import '../../data/models/player.dart';
 import '../../widgets/common/avatar.dart';
 
 class QRCheckinPage extends ConsumerStatefulWidget {

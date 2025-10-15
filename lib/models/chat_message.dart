@@ -1,4 +1,4 @@
-import 'player.dart';
+import '../data/models/player.dart';
 
 enum MessageType { text, image, file, system }
 

@@ -1,8 +1,10 @@
 import 'package:faker/faker.dart';
 import 'package:uuid/uuid.dart';
-import '../models/player.dart';
+import '../data/models/player.dart';
 import '../models/rounding.dart';
-import '../models/group.dart';
+import '../data/models/group.dart';
+import '../data/models/group_member.dart';
+import '../core/enums/group_enums.dart';
 import '../models/score_record.dart';
 import '../models/chat_message.dart';
 
@@ -227,13 +229,29 @@ class MockDataService {
         }
       }
 
+      // Convert Player list to GroupMember list
+      final groupId = _uuid.v4();
+      final groupMembers = selectedPlayers.map((player) {
+        return GroupMember(
+          id: _uuid.v4(),
+          groupId: groupId,
+          playerId: player.id,
+          player: player,
+          role: MemberRole.member,
+          status: MemberStatus.active,
+          joinedAt: createdAt,
+        );
+      }).toList();
+
       return Group(
-        id: _uuid.v4(),
+        id: groupId,
         name: groupName,
         description: description,
+        isPublic: true,
         status: GroupStatus.active, // Premium groups are always active
-        members: selectedPlayers,
+        members: groupMembers,
         createdAt: createdAt,
+        roundCount: 0,
         isPremium: isPremium,
       );
     }).toList();

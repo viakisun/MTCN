@@ -1,4 +1,4 @@
-import 'player.dart';
+import '../data/models/player.dart';
 
 /// 초대 상태
 enum InvitationStatus {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/theme/design_tokens.dart';
-import '../../models/player.dart';
+import '../../data/models/player.dart';
 
 class ScoreEntryPage extends ConsumerStatefulWidget {
   final Player? player;
