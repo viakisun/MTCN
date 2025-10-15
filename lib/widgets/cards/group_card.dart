@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/design_tokens.dart';
 import '../../core/enums/group_enums.dart';
 import '../../data/models/group.dart';
-import '../../screens/groups/group_detail_page.dart.bak';
+// import '../../screens/groups/group_detail_page.dart'; // 파일이 존재하지 않음
 import '../common/avatar.dart';
 import '../common/badge.dart' as custom;
 import '../common/player_detail_sheet.dart';
@@ -19,10 +19,11 @@ class GroupCard extends StatelessWidget {
       onTap:
           onTap ??
           () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => GroupDetailPage(group: group),
+            // TODO: GroupDetailPage 구현 후 네비게이션 활성화
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('${group.name} 상세 페이지는 준비 중입니다'),
+                duration: const Duration(seconds: 2),
               ),
             );
           },

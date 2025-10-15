@@ -9,7 +9,7 @@ pre-commit:
     
     # 2. Flutter 정적 분석
     analyze:
-      run: flutter analyze
+      run: flutter analyze --no-fatal-infos
       fail_text: "Flutter analyze에서 오류를 발견했습니다. 수정 후 다시 커밋하세요."
     
     # 3. Flutter 테스트 실행

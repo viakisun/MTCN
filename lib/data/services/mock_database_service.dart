@@ -139,6 +139,17 @@ class MockDatabaseService implements IDatabaseService {
         avatar: 'https://example.com/avatar3.jpg',
         isPlaying: false,
       ),
+      Player(
+        id: 'player_4',
+        name: '정수진',
+        firstName: '수진',
+        lastName: '정',
+        averageScore: 95,
+        bestScore: 82,
+        handicap: 20,
+        avatar: 'https://example.com/avatar4.jpg',
+        isPlaying: false,
+      ),
     ];
 
     // Store players

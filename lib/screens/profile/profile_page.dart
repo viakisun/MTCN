@@ -48,7 +48,8 @@ class ProfilePage extends ConsumerWidget {
                 children: [
                   const SizedBox(height: DesignTokens.spacing6),
                   const Avatar(
-                        imageUrl: 'https://i.pravatar.cc/150?img=1',
+                        imageUrl:
+                            'https://via.placeholder.com/150/4F46E5/FFFFFF?text=김',
                         name: '김민수',
                         size: AvatarSize.large,
                         showBorder: true,

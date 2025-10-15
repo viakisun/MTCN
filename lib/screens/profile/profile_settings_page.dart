@@ -71,7 +71,8 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                     Stack(
                       children: [
                         const Avatar(
-                          imageUrl: 'https://i.pravatar.cc/300?img=12',
+                          imageUrl:
+                              'https://via.placeholder.com/300/4F46E5/FFFFFF?text=김',
                           name: '김철수',
                           size: AvatarSize.xxLarge,
                         ),
